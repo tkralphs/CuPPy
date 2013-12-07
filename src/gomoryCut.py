@@ -52,6 +52,8 @@ display = True
 
 lp = CyClpSimplex()
 
+sys.path.append('../instances')
+
 from MIP1 import numVars, numCons, A, b, c, sense, integerIndices
 try:
     from MIP1 import x_u
