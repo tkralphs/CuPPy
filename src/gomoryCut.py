@@ -48,15 +48,15 @@ def disp_relaxation(A, b):
     plt.show()
 
 max_cuts = 1
-display = True
+display = False
 
 lp = CyClpSimplex()
 
 sys.path.append('../instances')
 
-from MIP1 import numVars, numCons, A, b, c, sense, integerIndices
+from MIP2 import numVars, numCons, A, b, c, sense, integerIndices
 try:
-    from MIP1 import x_u
+    from MIP2 import x_u
 except ImportError:
     x_u = None
 else:
