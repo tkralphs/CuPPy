@@ -3,8 +3,12 @@ import math
 import numpy as np
 from CyLP.cy import CyClpSimplex
 from CyLP.py.modeling import CyLPArray
-from grumpy.polyhedron2D import Polyhedron2D, add_line
-import matplotlib.pyplot as plt
+DISPLAY_ENABLED = True
+try:
+    from grumpy.polyhedron2D import Polyhedron2D, add_line
+    import matplotlib.pyplot as plt
+except ImportError:
+    DISPLAY_ENABLED = False
 
 epsilon = 0.01
 maxiter = 100
@@ -49,6 +53,8 @@ def disp_relaxation(A, b):
 
 max_cuts = 1
 display = False
+if not DISPLAY_ENABLED:
+    display = False
 
 lp = CyClpSimplex()
 
