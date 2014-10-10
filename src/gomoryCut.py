@@ -1,8 +1,8 @@
 import sys
 import math
 import numpy as np
-from CyLP.cy import CyClpSimplex
-from CyLP.py.modeling import CyLPArray
+from cylp.cy import CyClpSimplex
+from cylp.py.modeling import CyLPArray
 DISPLAY_ENABLED = True
 try:
     from grumpy.polyhedron2D import Polyhedron2D, add_line
