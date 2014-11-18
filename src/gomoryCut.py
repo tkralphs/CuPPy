@@ -3,7 +3,7 @@ import math
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray
-DISPLAY_ENABLED = False
+DISPLAY_ENABLED = True
 try:
     from src.grumpy.polyhedron2D import Polyhedron2D, add_line
     import matplotlib.pyplot as plt
