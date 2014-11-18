@@ -1,17 +1,17 @@
 import sys
 import math
 import numpy as np
-from CyLP.cy import CyClpSimplex
-from CyLP.py.modeling import CyLPArray
-DISPLAY_ENABLED = True
+from cylp.cy import CyClpSimplex
+from cylp.py.modeling import CyLPArray
+DISPLAY_ENABLED = False
 try:
-    from grumpy.polyhedron2D import Polyhedron2D, add_line
+    from src.grumpy.polyhedron2D import Polyhedron2D, add_line
     import matplotlib.pyplot as plt
 except ImportError:
     DISPLAY_ENABLED = False
 
 epsilon = 0.01
-maxiter = 100
+maxiter = 1000
 
 def isInt(x):
     '''
@@ -52,7 +52,7 @@ def disp_relaxation(A, b):
     plt.show()
 
 max_cuts = 1
-display = False
+display = True
 if not DISPLAY_ENABLED:
     display = False
 
@@ -60,9 +60,9 @@ lp = CyClpSimplex()
 
 sys.path.append('../instances')
 
-from MIP2 import numVars, numCons, A, b, c, sense, integerIndices
+from MIP6 import numVars, numCons, A, b, c, sense, integerIndices
 try:
-    from MIP2 import x_u
+    from MIP6 import x_u
 except ImportError:
     x_u = None
 else:
@@ -140,6 +140,7 @@ for i in xrange(maxiter):
             if display:
                 disp_relaxation(myA, myb)
 
+disp_relaxation(myA, myb)
 
 
 
