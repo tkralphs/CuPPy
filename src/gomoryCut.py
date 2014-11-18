@@ -5,7 +5,7 @@ from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray
 DISPLAY_ENABLED = True
 try:
-    from grumpy.polyhedron2D import Polyhedron2D, add_line
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
     import matplotlib.pyplot as plt
 except ImportError:
     DISPLAY_ENABLED = False
@@ -40,19 +40,18 @@ def gomoryCut(lp, rowInd, value, sense):
     return pi, pi0
 
 def disp_relaxation(A, b):
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.grid()
     p = Polyhedron2D(A = A, b = b)
-    p.draw(ax, color = 'blue', linestyle = 'solid')
-    ax.set_xlim(p.plot_min[0], p.plot_max[0])
-    ax.set_ylim(p.plot_min[1], p.plot_max[1])
+    f = Figure()
+    f.add_polyhedron(p, label = 'Polyhedron $P$')
+    f.set_xlim(p.plot_min[0], p.plot_max[0])
+    f.set_ylim(p.plot_min[1], p.plot_max[1])
     pI = p.make_integer_hull()
-    pI.draw(ax, color = 'red', linestyle = 'dashed')
-    plt.show()
+    f.add_polyhedron(pI, show_int_points = True, 
+                     label = 'Convex hull of integer points')
+    f.show()
 
 max_cuts = 1
-display = False
+display = True
 if not DISPLAY_ENABLED:
     display = False
 
@@ -60,9 +59,9 @@ lp = CyClpSimplex()
 
 sys.path.append('../instances')
 
-from MIP2 import numVars, numCons, A, b, c, sense, integerIndices
+from MIP6 import numVars, numCons, A, b, c, sense, integerIndices
 try:
-    from MIP2 import x_u
+    from MIP6 import x_u
 except ImportError:
     x_u = None
 else:
