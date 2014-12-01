@@ -16,4 +16,4 @@ bindings of [CyLP](https://github.com/coin-or/CyLP). Through CyLP, one can
 easily add these as cut generators within Cbc.
 
 The cutting plane procedure can be visualized for 2D examples using the
-polyhedron2D class of [GrUMPy](https://guthub.com/coin-or/GrUMPy).
+polyhedron2D class of [GrUMPy](https://github.com/coin-or/GrUMPy).
