@@ -5,8 +5,8 @@ points = [[2.5, 4.5], [6.5, 0.5], [0.5, 1],
 rays = []
 A = None
 b = None
-cuts = None
-rhs = None
 sense = ('Max', '<=')
 integerIndices = [0, 1]
+cuts = None
+rhs = None
 

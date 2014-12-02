@@ -53,7 +53,7 @@ from pulp import LpProblem, LpVariable, LpMinimize, LpInteger
 from pulp import LpContinuous, lpSum, LpConstraintVar, LpStatus
 from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 import sys
-sys.path.append('../instances')
+sys.path.append('instances')
 
 EPS = 1e-6
 class GenericSeparation(object):
@@ -115,11 +115,17 @@ class GenericSeparation(object):
             self.add_inequality()
             if self.output:
                 print "Separation problem solution status:", LpStatus[self.sepProb.solve()]
-                for v in self.sepProb.variables():
-                    print v.name+'\t\t', v.value()
+                for v in self.var:
+                    if self.pi[v].value() is not None:
+                        print self.pi[v].name+'\t\t', self.pi[v].value()
+                    else:
+                        print self.pi[v].name+'\t\t', 0
             self.piPrevious = deepcopy(self.piCurrent)
             for v in self.var:
-                self.piCurrent[v] = self.pi[v].value()
+                if self.pi[v].value() is not None:
+                    self.piCurrent[v] = self.pi[v].value()
+                else:
+                    self.piCurrent[v] = 0
             self.iter += 1
             if p is not None:
                 self.f.initialize()
@@ -182,12 +188,12 @@ if __name__ == '__main__':
         f.add_polyhedron(p, show_int_points = True, label = 'Polyhedron P')
         f.set_xlim(p.plot_min[0], p.plot_max[0])
         f.set_ylim(p.plot_min[1], p.plot_max[1])
-        f.add_point(mip.x, radius = 0.05, color = 'red')
-        f.add_text(mip.x[0]-0.5, mip.x[1]-0.08, '$x^*$')
+        f.add_point(mip.x_sep, radius = 0.05, color = 'red')
+        f.add_text(mip.x_sep[0]-0.5, mip.x_sep[1]-0.08, '$x^*$')
         f.show()
     # This is the point to be separated 
     x0 = {}
-    for index, value in enumerate(mip.x):
+    for index, value in enumerate(mip.x_sep):
         x0[vars[index].name] = value
     i = 0
     ic = GenericSeparation(prob, x0)

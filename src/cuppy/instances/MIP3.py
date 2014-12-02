@@ -1,9 +1,3 @@
-
-#points = [[0, 0], [2, 2], [3.75, 2.75], [3, 1]]
-points = None
-rays = []
-#A = None
-#b = None
 numVars = 2
 numCons = 4
 A = [[-1, 1],
@@ -14,11 +8,10 @@ b = [0, 0, 18, 8]
 c = [1, 1]
 sense = ('Max', '<=')
 integerIndices = [0, 1]
+#points = [[0, 0], [2, 2], [3.75, 2.75], [3, 1]]
+points = None
+rays = []
 
-cuts = None
-rhs = None
-
-'''
 cuts = [
 #        [1, 1],
         [-.266, 2.4],

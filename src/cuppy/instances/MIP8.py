@@ -1,8 +1,3 @@
-'''
-Created on Nov 7, 2014
-
-@author: ted
-'''
 A = [[ 1, -2],
  [-0, -1],
  [-2, -1],
@@ -23,6 +18,6 @@ b = [4,
 
 c = [-3, 5]
 
+#This is for the separation code
 x = [1, 1]
-#x_sep = [0.5, 1]
 x_sep = [0, 1]

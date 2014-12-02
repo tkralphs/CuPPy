@@ -5,7 +5,7 @@ import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
 from copy import deepcopy
-sys.path.append('../../instances')
+sys.path.append('instances')
 
 DISPLAY_ENABLED = True
 try:
