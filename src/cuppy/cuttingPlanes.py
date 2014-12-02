@@ -1,10 +1,10 @@
 import sys
 import math
+import importlib as ilib
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
 from copy import deepcopy
-from MIP1 import integerIndices
 sys.path.append('../instances')
 
 DISPLAY_ENABLED = True
@@ -27,7 +27,8 @@ def getFraction(x):
     'Return the fraction part of x: x - floor(x)'
     return x - math.floor(x)
 
-def splitCuts(lp, integerIndices = None, sense = '>=', sol = None):
+def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
+              max_coeff = 1):
     A = lp.coefMatrix
     b = CyLPArray(lp.constraintsUpper)
     if integerIndices is None:
@@ -58,8 +59,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None):
         sp.objective = (theta-1)*s*u - theta*s*v
         for i in xrange(lp.nVariables):
             if i in integerIndices:
-                sp += pi[i] <= 1
-                sp += pi[i] >= -1
+                sp += -max_coeff <= pi[i] <= max_coeff
             else:
                 sp[i] += pi[i] == 0
 
@@ -130,108 +130,106 @@ def disp_relaxation(A, b, cuts = [], sol = None):
         f.add_point(sol, radius = .05)
     f.show()
 
-def read_instance(import_instance = True, filename = None):
+def read_instance(module_name = True, file_name = None):
 
-    if import_instance:
+    if module_name:
         lp = CyClpSimplex()
 
-        from MIP6 import numVars, A, b, c, sense, integerIndices
-        try:
-            from MIP6 import x_u
-        except ImportError:
-            x_u = None
-        else:
-            x_u = CyLPArray(x_u)
+        mip = ilib.import_module(module_name)
             
-        myA = A
-        A = np.matrix(A)
+        A = np.matrix(mip.A)
         #print np.linalg.cond(A)
-        myb = b
-        b = CyLPArray(b)
+        b = CyLPArray(mip.b)
         
         #We assume variables have zero lower bounds
-        x_l = CyLPArray([0 for i in range(numVars)])
+        x_l = CyLPArray([0 for _ in range(mip.numVars)])
             
-        x = lp.addVariable('x', numVars)
+        x = lp.addVariable('x', mip.numVars)
         
         lp += x >= x_l
-        if x_u is not None:
+        try:
+            x_u = CyLPArray(getattr(mip, 'x_u'))
             lp += x <= x_u
+        except:
+            pass
         
-        lp += (A * x <= b if sense[1] == '<=' else
+        lp += (A * x <= b if mip.sense[1] == '<=' else
                A * x >= b)
-        c = CyLPArray(c)
-        lp.objective = -c * x if sense[0] == 'Max' else c * x
+        c = CyLPArray(mip.c)
+        lp.objective = -c * x if mip.sense[0] == 'Max' else c * x
+        
+        return lp, x, mip.A, mip.b, mip.sense, mip.integerIndices
     else:
         #TODO Change sense of inequalities so they are all the same
         #     by explicitly checking lp.constraintsUpper and lp.constraintsLower
         #Warning: Reading MP not well tested 
-        lp.extractCyLPModel(filename)
-        myA, myb = None, None
+        lp.extractCyLPModel(file_name)
         x = lp.cyLPModel.getVarByName('x')
         sense = ('Min', '>=')
-        
-    return lp, x, myA, myb, sense, integerIndices
+        return lp, x, None, None, sense, integerIndices
 
-generate_splits = True
-generate_GMI = True
-debug_print = False
-epsilon = 0.01
-maxiter = 10
-max_cuts = 10
-display = True
-if not DISPLAY_ENABLED:
-    display = False
 
-lp, x, A, b, sense, integerIndices = read_instance(import_instance = True)
-infinity = lp.getCoinInfinity()
-
-if display:
-    disp_relaxation(A, b)
-
-for i in xrange(maxiter):
-    print '______________________________________________________'
-    print 'iteration ', i
-    lp.primal(startFinishOptions = 'x')
-    bv = lp.basicVariables
-    #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
-    #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
-    #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
-    #rhs = lp.rhs
-    rhs = np.dot(lp.basisInverse, b)
-    sol = lp.primalVariableSolution['x']
-    if debug_print:
-        print 'Current basis inverse:'
-        print lp.basisInverse
-        print 'Condition number of basis inverse'
-        print np.linalg.cond(lp.basisInverse)
-        print "Current tableaux:"
-        print lp.tableau
-        print lp.rhs
-        print "Current right hand side:\n", rhs
-        print 'Current solution: ', sol
-    if isInt(sol[integerIndices]):
-        print 'Integer solution found!'
-        break
-    cuts = []
-    if generate_splits:
-        cuts.append(splitCuts(lp, integerIndices, sense[1]))
-    if generate_GMI:
-        cuts += gomoryCut(lp, integerIndices, sense[1])
+if __name__ == '__main__':
+    
+    generate_splits = True
+    generate_GMI = True
+    debug_print = False
+    epsilon = 0.01
+    maxiter = 10
+    max_cuts = 10
+    display = True
+    if not DISPLAY_ENABLED:
+        display = False
+    
+    lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    infinity = lp.getCoinInfinity()
+    
     if display:
-        disp_relaxation(A, b, cuts, sol)
-    for (coeff, r) in cuts[:max_cuts]:
-        #TODO sort cuts by degree of violation
-        if sense[1] == '<=':
-            print 'Adding cut: ', coeff, '<=', r
-            lp += CyLPArray(coeff) * x <= r
-        else:
-            print 'Adding cut: ', coeff, '>=', r
-            lp += CyLPArray(coeff) * x >= r
-        A.append(coeff.tolist())
-        b.append(r)
-
-disp_relaxation(A, b)
+        disp_relaxation(A, b)
+    
+    for i in xrange(maxiter):
+        print '______________________________________________________'
+        print 'iteration ', i
+        lp.primal(startFinishOptions = 'x')
+        bv = lp.basicVariables
+        #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
+        #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
+        #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
+        #rhs = lp.rhs
+        rhs = np.dot(lp.basisInverse, b)
+        sol = lp.primalVariableSolution['x']
+        if debug_print:
+            print 'Current basis inverse:'
+            print lp.basisInverse
+            print 'Condition number of basis inverse'
+            print np.linalg.cond(lp.basisInverse)
+            print "Current tableaux:"
+            print lp.tableau
+            print lp.rhs
+            print "Current right hand side:\n", rhs
+            print 'Current solution: ', sol
+        if isInt(sol[integerIndices]):
+            print 'Integer solution found!'
+            break
+        cuts = []
+        if generate_splits:
+            cuts.append(splitCuts(lp, integerIndices, sense[1]))
+        if generate_GMI:
+            cuts += gomoryCut(lp, integerIndices, sense[1])
+        if display:
+            disp_relaxation(A, b, cuts, sol)
+        for (coeff, r) in cuts[:max_cuts]:
+            #TODO sort cuts by degree of violation
+            if sense[1] == '<=':
+                print 'Adding cut: ', coeff, '<=', r
+                lp += CyLPArray(coeff) * x <= r
+            else:
+                print 'Adding cut: ', coeff, '>=', r
+                lp += CyLPArray(coeff) * x >= r
+            A.append(coeff.tolist())
+            b.append(r)
+    
+    disp_relaxation(A, b)
 
 
 
