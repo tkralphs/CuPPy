@@ -17,3 +17,7 @@ easily add these as cut generators within Cbc.
 
 The cutting plane procedure can be visualized for 2D examples using the
 polyhedron2D class of [GrUMPy](https://github.com/coin-or/GrUMPy).
+
+Install with `easy_install coinor.cuppy`
+
+
