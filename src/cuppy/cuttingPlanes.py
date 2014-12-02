@@ -5,7 +5,7 @@ import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
 from copy import deepcopy
-sys.path.append('../instances')
+sys.path.append('../../instances')
 
 DISPLAY_ENABLED = True
 try:
@@ -73,14 +73,22 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         if cbcModel.objectiveValue < best:
             best = cbcModel.objectiveValue
             multu = cbcModel.primalVariableSolution['u']
-            multv = cbcModel.primalVariableSolution['v']
             disjunction = cbcModel.primalVariableSolution['pi']
             rhs = cbcModel.primalVariableSolution['pi0']
             best_theta = theta
-    return A.transpose()*multu + best_theta*disjunction, np.dot(lp.constraintsUpper, multu) + best_theta*rhs
+            
+    alpha = A.transpose()*multu + best_theta*disjunction
+    if sense == '<=':
+        beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
+    else:
+        beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
+    if (abs(alpha) > 1e-6).any():
+        return [(alpha, beta)] 
+    else:
+        return []
     
 def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = None):
-    'Return the Gomory cut of row ``rowInd`` of lp (a CyClpSimplex object)'
+    'Return the Gomory cut of rows in ``rowInds`` of lp (a CyClpSimplex object)'
     cuts = []
     sol = lp.primalVariableSolution['x']
     if rowInds is None:
@@ -168,7 +176,6 @@ def read_instance(module_name = True, file_name = None):
         sense = ('Min', '>=')
         return lp, x, None, None, sense, integerIndices
 
-
 if __name__ == '__main__':
     
     generate_splits = True
@@ -205,17 +212,20 @@ if __name__ == '__main__':
             print np.linalg.cond(lp.basisInverse)
             print "Current tableaux:"
             print lp.tableau
-            print lp.rhs
             print "Current right hand side:\n", rhs
+            print lp.rhs
             print 'Current solution: ', sol
         if isInt(sol[integerIndices]):
             print 'Integer solution found!'
             break
         cuts = []
         if generate_splits:
-            cuts.append(splitCuts(lp, integerIndices, sense[1]))
+            cuts += splitCuts(lp, integerIndices, sense[1])
         if generate_GMI:
             cuts += gomoryCut(lp, integerIndices, sense[1])
+        if cuts == []:
+            print 'No cuts found!'
+            break
         if display:
             disp_relaxation(A, b, cuts, sol)
         for (coeff, r) in cuts[:max_cuts]:
