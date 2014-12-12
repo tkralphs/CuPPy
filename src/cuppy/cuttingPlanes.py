@@ -7,9 +7,13 @@ from cylp.py.modeling import CyLPArray, CyLPModel
 from copy import deepcopy
 sys.path.append('instances')
 
-DISPLAY_ENABLED = True
 try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+except ImportError:
+    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+
+DISPLAY_ENABLED = True
+try:
     import matplotlib.pyplot as plt
 except ImportError:
     DISPLAY_ENABLED = False

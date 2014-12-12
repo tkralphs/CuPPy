@@ -51,7 +51,10 @@ import importlib as ilib
 from copy import deepcopy
 from pulp import LpProblem, LpVariable, LpMinimize, LpInteger
 from pulp import LpContinuous, lpSum, LpConstraintVar, LpStatus
-from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+try:
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+except ImportError:
+    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
 import sys
 sys.path.append('instances')
 
