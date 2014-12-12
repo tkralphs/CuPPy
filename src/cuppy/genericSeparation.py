@@ -40,12 +40,12 @@ InvCollection:
         solve():     uses other methods iteratively to solve the InvProb
 '''
 
-__version__    = '1.0.0'
-__author__     = 'Aykut Bulut'
-__license__    = None
-__maintainer__ = 'Aykut Bulut'
-__email__      = 'ayb211@lehigh.edu'
-__url__     = None
+__version__    = '0.5.2'
+__author__     = 'Aykut Bulut and Ted Ralphs'
+__license__    = 'Eclipse Public License'
+__maintainer__ = 'Ted Ralphs'
+__email__      = 'ted@lehigh.edu'
+__url__        = 'https://github.com/tkralphs/CuPPy'
 
 import importlib as ilib
 from copy import deepcopy

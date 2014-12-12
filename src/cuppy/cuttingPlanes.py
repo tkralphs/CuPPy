@@ -1,3 +1,11 @@
+__version__    = '0.5.2'
+__author__     = 'Aykut Bulut and Ted Ralphs'
+__license__    = 'Eclipse Public License'
+__maintainer__ = 'Ted Ralphs'
+__email__      = 'ted@lehigh.edu'
+__url__        = 'https://github.com/tkralphs/CuPPy'
+
+
 import sys
 import math
 import importlib as ilib
