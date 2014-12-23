@@ -5,7 +5,6 @@ __maintainer__ = 'Ted Ralphs'
 __email__      = 'ted@lehigh.edu'
 __url__        = 'https://github.com/tkralphs/CuPPy'
 
-
 import sys
 import math
 import importlib as ilib
@@ -39,8 +38,8 @@ def getFraction(x):
     'Return the fraction part of x: x - floor(x)'
     return x - math.floor(x)
 
-def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
-              max_coeff = 1):
+def splitCuts(lp, integerIndices = None, sense = '>=', 
+              sol = None, max_coeff = 1):
     A = lp.coefMatrix
     b = CyLPArray(lp.constraintsUpper)
     if integerIndices is None:
@@ -56,7 +55,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         v = sp.addVariable('v', lp.nConstraints, isInt = False)
         pi = sp.addVariable('pi', lp.nVariables, isInt = True)
         pi0 = sp.addVariable('pi0', 1, isInt = True)
-    
+        sp.objective = (theta-1)*s*u - theta*s*v
         sp += pi + A.transpose()*u - A.transpose()*v == 0
         sp += pi0 + b*u - b*v == theta - 1
         if sense == '<=':
@@ -67,8 +66,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
             # Is this all we need?
             sp += u <= 0
             sp += v <= 0
-            
-        sp.objective = (theta-1)*s*u - theta*s*v
+
         for i in xrange(lp.nVariables):
             if i in integerIndices:
                 sp += -max_coeff <= pi[i] <= max_coeff
@@ -76,7 +74,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
                 sp[i] += pi[i] == 0
 
         cbcModel = CyClpSimplex(sp).getCbcModel()
-        cbcModel.logLevel = -1
+        cbcModel.logLevel = 0
         #cbcModel.maximumSeconds = 5
         cbcModel.solve()
         if debug_print:
@@ -85,6 +83,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         if cbcModel.objectiveValue < best:
             best = cbcModel.objectiveValue
             multu = cbcModel.primalVariableSolution['u']
+            multv = cbcModel.primalVariableSolution['v']
             disjunction = cbcModel.primalVariableSolution['pi']
             rhs = cbcModel.primalVariableSolution['pi0']
             best_theta = theta
@@ -98,6 +97,62 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         return [(alpha, beta)] 
     else:
         return []
+
+def splitBoundCuts(lp, integerIndices = None, sense = '>=', 
+                   obj = None, sol = None, max_coeff = 1):
+    A = lp.coefMatrix
+    b = CyLPArray(lp.constraintsUpper)
+    if integerIndices is None:
+        integerIndices = range(lp.nVariables)
+    if sol is None:
+        sol = lp.primalVariableSolution['x']
+    best = lp.getCoinInfinity()
+
+    scales = [1.49, 1.491, 1.492, 1.493, 1.494, 1.495, 1.503, 1.504, 1.505, 1.506]
+    mults = [0.1, 0.2, 0.3, 0.4, 0.5]
+    mults = [i*j for i in scales for j in mults]
+    for theta in mults:
+        sp = CyLPModel()
+        u = sp.addVariable('u', lp.nConstraints, isInt = False)
+        v = sp.addVariable('v', lp.nConstraints, isInt = False)
+        pi = sp.addVariable('pi', lp.nVariables, isInt = True)
+        pi0 = sp.addVariable('pi0', 1, isInt = True)
+        beta = sp.addVariable('beta', 1, isInt = False)
+        sp.objective = beta
+        for i in range(lp.nVariables):
+            sp += A.transpose()[i]*u + theta*pi[i] >= obj[i]  
+            sp += A.transpose()[i]*v + (theta-1.5)*pi[i] >= obj[i] 
+        sp += b*u + theta*pi0 - beta <= 0
+        sp += b*v + (theta-1.5)* pi0 - beta <= 1.5 - theta 
+        if sense == '<=':
+            sp += u >= 0
+            sp += v >= 0
+        else:
+            #TODO this direction is not debugged
+            # Is this all we need?
+            sp += u <= 0
+            sp += v <= 0
+
+        for i in xrange(lp.nVariables):
+            if i in integerIndices:
+                sp += -max_coeff <= pi[i] <= max_coeff
+            else:
+                sp[i] += pi[i] == 0
+
+        cbcModel = CyClpSimplex(sp).getCbcModel()
+        cbcModel.logLevel = 0
+        #cbcModel.maximumSeconds = 5
+        cbcModel.solve()
+        if debug_print:
+            print theta, cbcModel.objectiveValue
+            print cbcModel.primalVariableSolution['pi'], cbcModel.primalVariableSolution['pi0']
+        if cbcModel.objectiveValue < best:
+            best = cbcModel.objectiveValue
+            multu = cbcModel.primalVariableSolution['u']
+            multv = cbcModel.primalVariableSolution['v']
+            best_beta = cbcModel.primalVariableSolution['beta']
+            best_theta = theta
+    return [(np.array(obj), best_beta)] 
     
 def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = None):
     'Return the Gomory cut of rows in ``rowInds`` of lp (a CyClpSimplex object)'
@@ -150,8 +205,10 @@ def disp_relaxation(A, b, cuts = [], sol = None):
         f.add_point(sol, radius = .05)
     f.show()
 
-def read_instance(module_name = True, file_name = None):
+def read_instance(module_name = None, file_name = None):
 
+    if module_name == None and file_name == None:
+        print "Error: Must specify either a module name or a file name. Exiting"
     if module_name:
         lp = CyClpSimplex()
 
@@ -178,7 +235,7 @@ def read_instance(module_name = True, file_name = None):
         c = CyLPArray(mip.c)
         lp.objective = -c * x if mip.sense[0] == 'Max' else c * x
         
-        return lp, x, mip.A, mip.b, mip.sense, mip.integerIndices
+        return lp, x, mip.A, mip.b, mip.c, mip.sense, mip.integerIndices
     else:
         #TODO Change sense of inequalities so they are all the same
         #     by explicitly checking lp.constraintsUpper and lp.constraintsLower
@@ -190,9 +247,10 @@ def read_instance(module_name = True, file_name = None):
 
 if __name__ == '__main__':
     
+    generate_bound_splits = True
     generate_splits = True
-    generate_GMI = True
-    debug_print = False
+    generate_GMI = False
+    debug_print = True
     epsilon = 0.01
     maxiter = 10
     max_cuts = 10
@@ -200,7 +258,7 @@ if __name__ == '__main__':
     if not DISPLAY_ENABLED:
         display = False
     
-    lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    lp, x, A, b, c, sense, integerIndices = read_instance(module_name = 'MIP6')
     infinity = lp.getCoinInfinity()
     
     if display:
@@ -231,6 +289,8 @@ if __name__ == '__main__':
             print 'Integer solution found!'
             break
         cuts = []
+        if generate_bound_splits:
+            cuts += splitBoundCuts(lp, integerIndices, sense[1], obj = c)
         if generate_splits:
             cuts += splitCuts(lp, integerIndices, sense[1])
         if generate_GMI:
