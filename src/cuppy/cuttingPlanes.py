@@ -35,6 +35,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         sol = lp.primalVariableSolution['x']
     s = A*sol - b
     best = lp.getCoinInfinity()
+    best_theta = None
 
     for theta in [0.1, 0.2, 0.3, 0.4, 0.5]:
         sp = CyLPModel()
@@ -62,12 +63,13 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
                 sp[i] += pi[i] == 0
 
         cbcModel = CyClpSimplex(sp).getCbcModel()
-        cbcModel.logLevel = -1
+        cbcModel.logLevel = 0
         #cbcModel.maximumSeconds = 5
         cbcModel.solve()
         if debug_print:
             print theta, cbcModel.objectiveValue
-            print cbcModel.primalVariableSolution['pi'], cbcModel.primalVariableSolution['pi0']
+            print cbcModel.primalVariableSolution['pi'], 
+            print cbcModel.primalVariableSolution['pi0']
         if cbcModel.objectiveValue < best:
             best = cbcModel.objectiveValue
             multu = cbcModel.primalVariableSolution['u']
@@ -75,18 +77,21 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
             rhs = cbcModel.primalVariableSolution['pi0']
             best_theta = theta
             
-    alpha = A.transpose()*multu + best_theta*disjunction
-    if sense == '<=':
-        beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
-    else:
-        beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
-    if (abs(alpha) > 1e-6).any():
-        return [(alpha, beta)] 
-    else:
-        return []
+    if best_theta is not None:
+        alpha = A.transpose()*multu + best_theta*disjunction
+        if sense == '<=':
+            beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
+        else:
+            beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
+        if (abs(alpha) > 1e-6).any():
+            return [(alpha, beta)] 
+    return []
+
     
-def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = None):
-    'Return the Gomory cut of rows in ``rowInds`` of lp (a CyClpSimplex object)'
+def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, 
+              value = None):
+    '''Return the Gomory cut of rows in ``rowInds`` of lp 
+    (a CyClpSimplex object)'''
     cuts = []
     sol = lp.primalVariableSolution['x']
     if rowInds is None:
@@ -100,7 +105,8 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = N
             f = []
             for i in range(lp.nVariables):
                 if i in lp.basicVariables:
-                    #This is to try to avoid getting very small numbers that should be zero
+                    #This is to try to avoid getting very small numbers that 
+                    #should be zero
                     f.append(0)
                 else:
                     f.append(getFraction(lp.tableau[row, i]))
@@ -243,7 +249,8 @@ if __name__ == '__main__':
             A.append(coeff.tolist())
             b.append(r)
     
-    disp_relaxation(A, b)
+    if display:
+        disp_relaxation(A, b)
 
 
 
