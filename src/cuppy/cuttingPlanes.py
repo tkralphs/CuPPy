@@ -4,13 +4,11 @@ import importlib as ilib
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
-from copy import deepcopy
 sys.path.append('instances')
 
 DISPLAY_ENABLED = True
 try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
-    import matplotlib.pyplot as plt
 except ImportError:
     DISPLAY_ENABLED = False
 
@@ -138,9 +136,9 @@ def disp_relaxation(A, b, cuts = [], sol = None):
         f.add_point(sol, radius = .05)
     f.show()
 
-def read_instance(module_name = True, file_name = None):
+def read_instance(module_name = None, file_name = None):
 
-    if module_name:
+    if module_name is not None:
         lp = CyClpSimplex()
 
         mip = ilib.import_module(module_name)
@@ -167,14 +165,19 @@ def read_instance(module_name = True, file_name = None):
         lp.objective = -c * x if mip.sense[0] == 'Max' else c * x
         
         return lp, x, mip.A, mip.b, mip.sense, mip.integerIndices
-    else:
+    elif file_name is not None:
         #TODO Change sense of inequalities so they are all the same
         #     by explicitly checking lp.constraintsUpper and lp.constraintsLower
         #Warning: Reading MP not well tested 
-        lp.extractCyLPModel(file_name)
-        x = lp.cyLPModel.getVarByName('x')
+        lp = CyClpSimplex()
+        m = lp.extractCyLPModel(file_name)
+        x = m.getVarByName('x')
         sense = ('Min', '>=')
-        return lp, x, None, None, sense, integerIndices
+        integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
+        return lp, x, lp.coefMatrix, lp.rhs, sense, integerIndices
+    else:
+        print "No file or module name specified..."
+        return None, None, None, None, None, None
 
 if __name__ == '__main__':
     
@@ -184,11 +187,12 @@ if __name__ == '__main__':
     epsilon = 0.01
     maxiter = 10
     max_cuts = 10
-    display = True
+    display = False
     if not DISPLAY_ENABLED:
         display = False
     
     lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    #lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
     infinity = lp.getCoinInfinity()
     
     if display:
