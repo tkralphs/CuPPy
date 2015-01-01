@@ -12,17 +12,11 @@ import importlib as ilib
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
-from copy import deepcopy
 sys.path.append('instances')
-
-try:
-    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
-except ImportError:
-    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
 
 DISPLAY_ENABLED = True
 try:
-    import matplotlib.pyplot as plt
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
     DISPLAY_ENABLED = False
 
@@ -49,6 +43,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         sol = lp.primalVariableSolution['x']
     s = A*sol - b
     best = lp.getCoinInfinity()
+    best_theta = None
 
     for theta in [0.1, 0.2, 0.3, 0.4, 0.5]:
         sp = CyLPModel()
@@ -76,12 +71,13 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
                 sp[i] += pi[i] == 0
 
         cbcModel = CyClpSimplex(sp).getCbcModel()
-        cbcModel.logLevel = -1
+        cbcModel.logLevel = 0
         #cbcModel.maximumSeconds = 5
         cbcModel.solve()
         if debug_print:
             print theta, cbcModel.objectiveValue
-            print cbcModel.primalVariableSolution['pi'], cbcModel.primalVariableSolution['pi0']
+            print cbcModel.primalVariableSolution['pi'], 
+            print cbcModel.primalVariableSolution['pi0']
         if cbcModel.objectiveValue < best:
             best = cbcModel.objectiveValue
             multu = cbcModel.primalVariableSolution['u']
@@ -89,18 +85,21 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
             rhs = cbcModel.primalVariableSolution['pi0']
             best_theta = theta
             
-    alpha = A.transpose()*multu + best_theta*disjunction
-    if sense == '<=':
-        beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
-    else:
-        beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
-    if (abs(alpha) > 1e-6).any():
-        return [(alpha, beta)] 
-    else:
-        return []
+    if best_theta is not None:
+        alpha = A.transpose()*multu + best_theta*disjunction
+        if sense == '<=':
+            beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
+        else:
+            beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
+        if (abs(alpha) > 1e-6).any():
+            return [(alpha, beta)] 
+    return []
+
     
-def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = None):
-    'Return the Gomory cut of rows in ``rowInds`` of lp (a CyClpSimplex object)'
+def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, 
+              value = None):
+    '''Return the Gomory cut of rows in ``rowInds`` of lp 
+    (a CyClpSimplex object)'''
     cuts = []
     sol = lp.primalVariableSolution['x']
     if rowInds is None:
@@ -114,7 +113,8 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, value = N
             f = []
             for i in range(lp.nVariables):
                 if i in lp.basicVariables:
-                    #This is to try to avoid getting very small numbers that should be zero
+                    #This is to try to avoid getting very small numbers that 
+                    #should be zero
                     f.append(0)
                 else:
                     f.append(getFraction(lp.tableau[row, i]))
@@ -150,9 +150,9 @@ def disp_relaxation(A, b, cuts = [], sol = None):
         f.add_point(sol, radius = .05)
     f.show()
 
-def read_instance(module_name = True, file_name = None):
+def read_instance(module_name = None, file_name = None):
 
-    if module_name:
+    if module_name is not None:
         lp = CyClpSimplex()
 
         mip = ilib.import_module(module_name)
@@ -177,30 +177,48 @@ def read_instance(module_name = True, file_name = None):
                A * x >= b)
         c = CyLPArray(mip.c)
         lp.objective = -c * x if mip.sense[0] == 'Max' else c * x
-        
-        return lp, x, mip.A, mip.b, mip.sense, mip.integerIndices
+        return lp, x, mip.A, mip.b, mip.sense[1], mip.integerIndices
+    elif file_name is not None:
+        lp = CyClpSimplex()
+        m = lp.extractCyLPModel(file_name)
+        x = m.getVarByName('x')
+        integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
+        infinity = lp.getCoinInfinity()
+        sense = None
+        for i in range(lp.nRows):
+            if lp.constraintsLower[i] > -infinity:
+                if sense == '<=':
+                    print "Function does not support mixed constraint..."
+                    break
+                else: 
+                    sense = '>='
+                    b = lp.constraintsLower
+            if lp.constraintsUpper[i] < infinity: 
+                if sense == '>=':
+                    print "Function does not support mixed constraint..."
+                    break
+                else: 
+                    sense = '<='
+                    b = lp.constraintsUpper
+        return lp, x, lp.coefMatrix, b, sense, integerIndices
     else:
-        #TODO Change sense of inequalities so they are all the same
-        #     by explicitly checking lp.constraintsUpper and lp.constraintsLower
-        #Warning: Reading MP not well tested 
-        lp.extractCyLPModel(file_name)
-        x = lp.cyLPModel.getVarByName('x')
-        sense = ('Min', '>=')
-        return lp, x, None, None, sense, integerIndices
+        print "No file or module name specified..."
+        return None, None, None, None, None, None
 
 if __name__ == '__main__':
     
-    generate_splits = True
+    generate_splits = False
     generate_GMI = True
     debug_print = False
     epsilon = 0.01
     maxiter = 10
     max_cuts = 10
-    display = True
+    display = False
     if not DISPLAY_ENABLED:
         display = False
     
-    lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    #lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
     infinity = lp.getCoinInfinity()
     
     if display:
@@ -215,7 +233,10 @@ if __name__ == '__main__':
         #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
         #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
         #rhs = lp.rhs
-        rhs = np.dot(lp.basisInverse, b)
+        if sense == '<=':
+            rhs = np.dot(lp.basisInverse, lp.constraintsUpper)
+        else:
+            rhs = np.dot(lp.basisInverse, lp.constraintsLower)
         sol = lp.primalVariableSolution['x']
         if debug_print:
             print 'Current basis inverse:'
@@ -232,9 +253,9 @@ if __name__ == '__main__':
             break
         cuts = []
         if generate_splits:
-            cuts += splitCuts(lp, integerIndices, sense[1])
+            cuts += splitCuts(lp, integerIndices, sense)
         if generate_GMI:
-            cuts += gomoryCut(lp, integerIndices, sense[1])
+            cuts += gomoryCut(lp, integerIndices, sense)
         if cuts == []:
             print 'No cuts found!'
             break
@@ -242,16 +263,18 @@ if __name__ == '__main__':
             disp_relaxation(A, b, cuts, sol)
         for (coeff, r) in cuts[:max_cuts]:
             #TODO sort cuts by degree of violation
-            if sense[1] == '<=':
+            if sense == '<=':
                 print 'Adding cut: ', coeff, '<=', r
                 lp += CyLPArray(coeff) * x <= r
             else:
                 print 'Adding cut: ', coeff, '>=', r
                 lp += CyLPArray(coeff) * x >= r
-            A.append(coeff.tolist())
-            b.append(r)
+            if display:
+                A.append(coeff.tolist())
+                b.append(r)
     
-    disp_relaxation(A, b)
+    if display:
+        disp_relaxation(A, b)
 
 
 
