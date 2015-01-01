@@ -169,25 +169,37 @@ def read_instance(module_name = None, file_name = None):
                A * x >= b)
         c = CyLPArray(mip.c)
         lp.objective = -c * x if mip.sense[0] == 'Max' else c * x
-        
-        return lp, x, mip.A, mip.b, mip.sense, mip.integerIndices
+        return lp, x, mip.A, mip.b, mip.sense[1], mip.integerIndices
     elif file_name is not None:
-        #TODO Change sense of inequalities so they are all the same
-        #     by explicitly checking lp.constraintsUpper and lp.constraintsLower
-        #Warning: Reading MP not well tested 
         lp = CyClpSimplex()
         m = lp.extractCyLPModel(file_name)
         x = m.getVarByName('x')
-        sense = ('Min', '>=')
         integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
-        return lp, x, lp.coefMatrix, lp.rhs, sense, integerIndices
+        infinity = lp.getCoinInfinity()
+        sense = None
+        for i in range(lp.nRows):
+            if lp.constraintsLower[i] > -infinity:
+                if sense == '<=':
+                    print "Function does not support mixed constraint..."
+                    break
+                else: 
+                    sense = '>='
+                    b = lp.constraintsLower
+            if lp.constraintsUpper[i] < infinity: 
+                if sense == '>=':
+                    print "Function does not support mixed constraint..."
+                    break
+                else: 
+                    sense = '<='
+                    b = lp.constraintsUpper
+        return lp, x, lp.coefMatrix, b, sense, integerIndices
     else:
         print "No file or module name specified..."
         return None, None, None, None, None, None
 
 if __name__ == '__main__':
     
-    generate_splits = True
+    generate_splits = False
     generate_GMI = True
     debug_print = False
     epsilon = 0.01
@@ -197,8 +209,8 @@ if __name__ == '__main__':
     if not DISPLAY_ENABLED:
         display = False
     
-    lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
-    #lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
+    #lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
     infinity = lp.getCoinInfinity()
     
     if display:
@@ -230,9 +242,9 @@ if __name__ == '__main__':
             break
         cuts = []
         if generate_splits:
-            cuts += splitCuts(lp, integerIndices, sense[1])
+            cuts += splitCuts(lp, integerIndices, sense)
         if generate_GMI:
-            cuts += gomoryCut(lp, integerIndices, sense[1])
+            cuts += gomoryCut(lp, integerIndices, sense)
         if cuts == []:
             print 'No cuts found!'
             break
@@ -240,7 +252,7 @@ if __name__ == '__main__':
             disp_relaxation(A, b, cuts, sol)
         for (coeff, r) in cuts[:max_cuts]:
             #TODO sort cuts by degree of violation
-            if sense[1] == '<=':
+            if sense == '<=':
                 print 'Adding cut: ', coeff, '<=', r
                 lp += CyLPArray(coeff) * x <= r
             else:
