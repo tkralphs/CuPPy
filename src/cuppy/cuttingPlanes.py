@@ -27,7 +27,8 @@ def isInt(x):
     '''
     if isinstance(x, (int, long, float)):
         return abs(math.floor(x) - x) < epsilon
-    return (np.abs(np.floor(x) - x) < epsilon).all()
+    print np.abs(np.around(x) - x)
+    return (np.abs(np.around(x) - x) < epsilon).all()
 
 def getFraction(x):
     'Return the fraction part of x: x - floor(x)'
@@ -35,8 +36,12 @@ def getFraction(x):
 
 def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
               max_coeff = 1):
+    #Warning: At the moment, you must put bound constraints in explicitly for split cuts
     A = lp.coefMatrix
-    b = CyLPArray(lp.constraintsUpper)
+    if sense == '<=':
+        b = CyLPArray(lp.constraintsUpper)
+    else:
+        b = CyLPArray(lp.constraintsLower)
     if integerIndices is None:
         integerIndices = range(lp.nVariables)
     if sol is None:
@@ -45,7 +50,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
     best = lp.getCoinInfinity()
     best_theta = None
 
-    for theta in [0.1, 0.2, 0.3, 0.4, 0.5]:
+    for theta in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
         sp = CyLPModel()
         u = sp.addVariable('u', lp.nConstraints, isInt = False)
         v = sp.addVariable('v', lp.nConstraints, isInt = False)
@@ -75,22 +80,31 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         #cbcModel.maximumSeconds = 5
         cbcModel.solve()
         if debug_print:
-            print theta, cbcModel.objectiveValue
-            print cbcModel.primalVariableSolution['pi'], 
-            print cbcModel.primalVariableSolution['pi0']
-        if cbcModel.objectiveValue < best:
-            best = cbcModel.objectiveValue
+            print 'Theta: ', theta, 
+            print 'Objective Value: ', cbcModel.objectiveValue - theta*(1-theta)
+            print 'pi: ', cbcModel.primalVariableSolution['pi']
+            print 'pi0: ', cbcModel.primalVariableSolution['pi0']
             multu = cbcModel.primalVariableSolution['u']
             disjunction = cbcModel.primalVariableSolution['pi']
             rhs = cbcModel.primalVariableSolution['pi0']
+            alpha = A.transpose()*multu + theta*disjunction
+            beta = np.dot(b, multu) + theta*rhs
+            print 'alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol)
+            print 'beta: ', beta
+            print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+        if cbcModel.objectiveValue - theta*(1-theta) < best:
+            best = cbcModel.objectiveValue - theta*(1-theta)
+            best_multu = cbcModel.primalVariableSolution['u']
+            best_multv = cbcModel.primalVariableSolution['v']
+            best_disjunction = cbcModel.primalVariableSolution['pi']
+            best_rhs = cbcModel.primalVariableSolution['pi0']
             best_theta = theta
             
     if best_theta is not None:
-        alpha = A.transpose()*multu + best_theta*disjunction
-        if sense == '<=':
-            beta = np.dot(lp.constraintsUpper, multu) + best_theta*rhs
-        else:
-            beta = np.dot(lp.constraintsLower, multu) + best_theta*rhs
+        alpha = A.transpose()*best_multu + best_theta*best_disjunction
+        beta = np.dot(b, best_multu) + best_theta*best_rhs
+        if debug_print:
+            print 'Violation of cut: ',  np.dot(alpha, sol) - beta
         if (abs(alpha) > 1e-6).any():
             return [(alpha, beta)] 
     return []
@@ -161,7 +175,7 @@ def read_instance(module_name = None, file_name = None):
         #print np.linalg.cond(A)
         b = CyLPArray(mip.b)
         
-        #We assume variables have zero lower bounds
+        #Warning: At the moment, you must put bound constraints in explicitly for split cuts
         x_l = CyLPArray([0 for _ in range(mip.numVars)])
             
         x = lp.addVariable('x', mip.numVars)
@@ -207,27 +221,28 @@ def read_instance(module_name = None, file_name = None):
 
 if __name__ == '__main__':
     
-    generate_splits = False
-    generate_GMI = True
+    generate_splits = True
+    generate_GMI = False
     debug_print = False
     epsilon = 0.01
-    maxiter = 10
+    maxiter = 20
     max_cuts = 10
-    display = False
+    display = True
     if not DISPLAY_ENABLED:
         display = False
     
-    #lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
-    lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
+    lp, x, A, b, sense, integerIndices = read_instance(module_name = 'MIP6')
+    #lp, x, A, b, sense, integerIndices = read_instance(file_name = 'p0033.mps')
     infinity = lp.getCoinInfinity()
+    lp.logLevel = 0
     
     if display:
         disp_relaxation(A, b)
     
     for i in xrange(maxiter):
-        print '______________________________________________________'
-        print 'iteration ', i
+        print 'Iteration ', i
         lp.primal(startFinishOptions = 'x')
+        print 'Current bound:', lp.objectiveValue
         bv = lp.basicVariables
         #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
         #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
@@ -247,7 +262,7 @@ if __name__ == '__main__':
             print lp.tableau
             print "Current right hand side:\n", rhs
             print lp.rhs
-            print 'Current solution: ', sol
+        print 'Current solution: ', sol
         if isInt(sol[integerIndices]):
             print 'Integer solution found!'
             break
