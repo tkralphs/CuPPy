@@ -3,7 +3,8 @@ CuPPy
 
 A collection of "naive" implementations of basic cutting plane algorithms in Python. The
 collection contains a generator for Gomory Mixed Integer cuts and one for
-generating the most violated split cut using the method of Saxena and Balas.
+generating the most violated split cut using the method of Saxena and Balas, as well as 
+a generic generator for Fenchel-type cuts.
 
 The idea is for these implementations to be as transparent as possible. I
 intend them mainly for educational use. They will most certainly not be
