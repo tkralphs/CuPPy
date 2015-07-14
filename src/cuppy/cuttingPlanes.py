@@ -5,7 +5,6 @@ __maintainer__ = 'Ted Ralphs'
 __email__      = 'ted@lehigh.edu'
 __url__        = 'https://github.com/tkralphs/CuPPy'
 
-
 import sys
 import math
 import importlib as ilib
@@ -16,7 +15,7 @@ sys.path.append('instances')
 
 DISPLAY_ENABLED = True
 try:
-    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
     DISPLAY_ENABLED = False
 
@@ -27,7 +26,6 @@ def isInt(x):
     '''
     if isinstance(x, (int, long, float)):
         return abs(math.floor(x) - x) < epsilon
-    print np.abs(np.around(x) - x)
     return (np.abs(np.around(x) - x) < epsilon).all()
 
 def getFraction(x):
@@ -151,15 +149,14 @@ def disp_relaxation(A, b, cuts = [], sol = None):
     p = Polyhedron2D(A = A, b = b)
     f = Figure()
     f.add_polyhedron(p, label = 'Polyhedron $P$')
-    f.set_xlim(p.plot_min[0], p.plot_max[0])
-    f.set_ylim(p.plot_min[1], p.plot_max[1])
+    f.set_xlim([p.xlim[0], p.xlim[1]])
+    f.set_ylim([p.ylim[0], p.ylim[1]])
     pI = p.make_integer_hull()
     f.add_polyhedron(pI, show_int_points = True, color = 'red',
                      linestyle = 'dashed',
                      label = 'Convex hull of integer points')
     for (coeff, r) in cuts:
-        f.add_line(coeff, r, plot_max = p.plot_max, plot_min = p.plot_min,
-                   color = 'green', linestyle = 'dashed')
+        f.add_line(coeff, r, p.xlim, p.ylim, color = 'green', linestyle = 'dashed')
     if sol is not None:
         f.add_point(sol, radius = .05)
     f.show()
