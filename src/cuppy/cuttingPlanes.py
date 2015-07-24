@@ -11,11 +11,17 @@ import importlib as ilib
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
+PYOMO_INSTALLED = True
+try:
+    from pyomo.environ import *
+except ImportError:
+    PYOMO_INSTALLED = False
+
 sys.path.append('instances')
 
 DISPLAY_ENABLED = True
 try:
-    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
     DISPLAY_ENABLED = False
 
@@ -32,7 +38,7 @@ def getFraction(x):
     'Return the fraction part of x: x - floor(x)'
     return x - math.floor(x)
 
-def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
+def maxViolationSplitCuts(lp, integerIndices = None, sense = '>=', sol = None,
               max_coeff = 1):
     #Warning: At the moment, you must put bound constraints in explicitly for split cuts
     A = lp.coefMatrix
@@ -48,7 +54,7 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
     best = lp.getCoinInfinity()
     best_theta = None
 
-    for theta in [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]:
+    for theta in [0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5]:
         sp = CyLPModel()
         u = sp.addVariable('u', lp.nConstraints, isInt = False)
         v = sp.addVariable('v', lp.nConstraints, isInt = False)
@@ -78,18 +84,18 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         #cbcModel.maximumSeconds = 5
         cbcModel.solve()
         if debug_print:
-            print 'Theta: ', theta, 
-            print 'Objective Value: ', cbcModel.objectiveValue - theta*(1-theta)
-            print 'pi: ', cbcModel.primalVariableSolution['pi']
-            print 'pi0: ', cbcModel.primalVariableSolution['pi0']
+            #print 'Theta: ', theta, 
+            #print 'Objective Value: ', cbcModel.objectiveValue - theta*(1-theta)
+            #print 'pi: ', cbcModel.primalVariableSolution['pi']
+            #print 'pi0: ', cbcModel.primalVariableSolution['pi0']
             multu = cbcModel.primalVariableSolution['u']
             disjunction = cbcModel.primalVariableSolution['pi']
             rhs = cbcModel.primalVariableSolution['pi0']
             alpha = A.transpose()*multu + theta*disjunction
             beta = np.dot(b, multu) + theta*rhs
-            print 'alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol)
-            print 'beta: ', beta
-            print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+            #print 'alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol)
+            #print 'beta: ', beta
+            #print 'Violation of cut: ',  np.dot(alpha, sol) - beta
         if cbcModel.objectiveValue - theta*(1-theta) < best:
             best = cbcModel.objectiveValue - theta*(1-theta)
             best_multu = cbcModel.primalVariableSolution['u']
@@ -103,10 +109,239 @@ def splitCuts(lp, integerIndices = None, sense = '>=', sol = None,
         beta = np.dot(b, best_multu) + best_theta*best_rhs
         if debug_print:
             print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+            print 'pi: ', best_disjunction
+            print 'pi0: ', best_rhs
+            print 'theta: ',  best_theta
         if (abs(alpha) > 1e-6).any():
             return [(alpha, beta)] 
     return []
 
+def maxViolationSplitCuts2(lp, integerIndices = None, sense = '>=', sol = None,
+              max_coeff = 1):
+    #Warning: At the moment, you must put bound constraints in explicitly for split cuts
+    A = lp.coefMatrix
+    if sense == '<=':
+        b = CyLPArray(lp.constraintsUpper)
+    else:
+        b = CyLPArray(lp.constraintsLower)
+    if integerIndices is None:
+        integerIndices = range(lp.nVariables)
+    if sol is None:
+        sol = lp.primalVariableSolution['x']
+    s = A*sol - b
+
+    CG = AbstractModel()
+    CG.intIndices = Set(initialize=integerIndices)
+    if sense == '<=':
+        CG.u = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+    else:        
+        #TODO this direction is not debugged
+        # Is this all we need?
+        CG.u = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+    #This assumes that all variables are integer valued for now
+    CG.pi = Var(range(lp.nVariables), domain=Integers, bounds = (-max_coeff, max_coeff))
+    CG.pi0 = Var([1], domain=Integers, bounds = (None, None))    
+    CG.theta = Var([1], domain=NonNegativeReals, bounds = (0, 0.5))
+    Atran = A.transpose()
+
+    def pi_rule(CG, i):
+        return(CG.pi[i] + sum(Atran[i, j]*CG.u[j] - Atran[i, j]*CG.v[j] for j in range(lp.nConstraints)) == 0)
+    CG.pi_rule = Constraint(range(lp.nVariables), rule=pi_rule)
+    
+    def pi0_rule(CG):
+        return(CG.pi0[1] + sum(b[i]*CG.u[i] - b[i]*CG.v[i] for i in range(lp.nConstraints)) ==  CG.theta[1] -1)
+        #return(b[0]*CG.v[0] + CG.theta == CG.pi0)
+    CG.pi0_rule = Constraint(rule=pi0_rule)
+            
+    def objective_rule(CG):
+        return((CG.theta[1]-1)*sum(s[i]*CG.u[i] for i in range(lp.nConstraints)) - 
+               CG.theta[1]*sum(s[i]*CG.v[i] for i in range(lp.nConstraints)) - 
+               CG.theta[1]*(1-CG.theta[1]))
+    CG.objective = Objective(sense=minimize, rule=objective_rule)
+
+    debug_print = True
+    opt = SolverFactory("couenne")
+    #opt.options['display_stats'] = 'no' 
+    instance = CG.create()
+    #instance.pprint()
+    #opt.options['bonmin.bb_log_level'] = 5
+    #opt.options['bonmin.bb_log_interval'] = 1
+    results = opt.solve(instance)
+    instance.load(results)
+
+    multu = np.array([instance.u[i].value for i in range(lp.nConstraints)])
+    disjunction = np.array([instance.pi[i].value for i in range(lp.nVariables)])
+    rhs = instance.pi0[1].value
+    theta = instance.theta[1].value
+    alpha = A.transpose()*multu + theta*disjunction
+    beta = np.dot(b, multu) + theta*rhs
+    if debug_print:
+        print 'Theta: ', theta, 
+        print 'Objective Value: ', value(instance.objective)
+        print 'pi: ', disjunction
+        print 'pi0: ', rhs
+        print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+
+    if (abs(alpha) > 1e-6).any():
+        return [(alpha, beta)] 
+    return []
+
+def maxViolationSplitCuts3(lp, integerIndices = None, sense = '>=', sol = None,
+                 max_coeff = 1):
+    #Warning: At the moment, you must put bound constraints in explicitly for split cuts
+    A = lp.coefMatrix
+    if sense == '<=':
+        b = CyLPArray(lp.constraintsUpper)
+    else:
+        b = CyLPArray(lp.constraintsLower)
+    if integerIndices is None:
+        integerIndices = range(lp.nVariables)
+    if sol is None:
+        sol = lp.primalVariableSolution['x']
+    s = A*sol - b
+
+    CG = AbstractModel()
+    CG.intIndices = Set(initialize=integerIndices)
+    if sense == '<=':
+        CG.u = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+    else:        
+        #TODO this direction is not debugged
+        # Is this all we need?
+        CG.u = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+    #This assumes that all variables are integer valued for now
+    CG.pi = Var(range(lp.nVariables), domain=Integers, bounds = (-max_coeff, max_coeff))
+    CG.pi0 = Var([1], domain=Integers, bounds = (None, None))    
+    CG.theta = 0.5
+    Atran = A.transpose()
+
+    def pi_rule(CG, i):
+        return(CG.pi[i] + sum(Atran[i, j]*CG.u[j] - Atran[i, j]*CG.v[j] for j in range(lp.nConstraints)) == 0)
+    CG.pi_rule = Constraint(range(lp.nVariables), rule=pi_rule)
+    
+    def pi0_rule(CG):
+        return(CG.pi0[1] + sum(b[i]*CG.u[i] - b[i]*CG.v[i] for i in range(lp.nConstraints)) ==  CG.theta -1)
+        #return(b[0]*CG.v[0] + CG.theta == CG.pi0)
+    CG.pi0_rule = Constraint(rule=pi0_rule)
+            
+    def objective_rule(CG):
+        return((CG.theta-1)*sum(s[i]*CG.u[i] for i in range(lp.nConstraints)) - 
+               CG.theta*sum(s[i]*CG.v[i] for i in range(lp.nConstraints)) - 
+               CG.theta*(1-CG.theta))
+    CG.objective = Objective(sense=minimize, rule=objective_rule)
+
+    debug_print = True
+    opt = SolverFactory("couenne")
+    #opt.options['bonmin.bb_log_level'] = 5
+    #opt.options['bonmin.bb_log_interval'] = 1
+    instance = CG.create()
+    #instance.write("foo.nl", format="nl")
+    #instance.pprint()
+    #results = opt.solve(instance, tee=True)
+    results = opt.solve(instance)
+    instance.load(results)
+
+    multu = np.array([instance.u[i].value for i in range(lp.nConstraints)])
+    disjunction = np.array([instance.pi[i].value for i in range(lp.nVariables)])
+    rhs = instance.pi0[1].value
+    alpha = A.transpose()*multu + CG.theta*disjunction
+    beta = np.dot(b, multu) + CG.theta*rhs
+    if debug_print:
+        print 'Theta: ', CG.theta, 
+        print 'Objective Value: ', value(instance.objective)
+        print 'pi: ', disjunction
+        print 'pi0: ', rhs
+        print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+
+    if (abs(alpha) > 1e-6).any():
+        return [(alpha, beta)] 
+    return []
+
+def boundOptimalSplitCuts(lp, integerIndices = None, sense = '>=', sol = None, 
+               max_coeff = 1):
+    #Warning: At the moment, you must put bound constraints in explicitly for split cuts
+    #This will probably only work with non-negative variables
+    A = lp.coefMatrix
+    if sense == '<=':
+        b = CyLPArray(lp.constraintsUpper)
+    else:
+        b = CyLPArray(lp.constraintsLower)
+    c = lp.objective
+    if integerIndices is None:
+        integerIndices = range(lp.nVariables)
+    if sol is None:
+        sol = lp.primalVariableSolution['x']
+
+    CG = AbstractModel()
+    CG.intIndices = Set(initialize=integerIndices)
+    if sense == '<=':
+        CG.u = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonPositiveReals, bounds = (None, None))
+        CG.u0 = Var([1], domain=NonPositiveReals, bounds = (None, None))
+        CG.v0 = Var([1], domain=NonPositiveReals, bounds = (None, None))
+    else:        
+        #TODO this direction is not debugged
+        # Is this all we need?
+        CG.u = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+        CG.v = Var(range(lp.nConstraints), domain=NonNegativeReals, bounds = (None, None))
+        CG.u0 = Var([1], domain=NonNegativeReals, bounds = (None, None))
+        CG.v0 = Var([1], domain=NonNegativeReals, bounds = (None, None))
+    #This assumes that all variables are integer valued for now
+    CG.pi = Var(range(lp.nVariables), domain=Integers, bounds = (-max_coeff, max_coeff))
+    CG.pi0 = Var([1], domain=Integers, bounds = (None, None))    
+    CG.beta = Var([1], domain=Reals, bounds = (None, None))    
+    Atran = A.transpose()
+
+    def pi_rule_left(CG, i):
+        return(sum(Atran[i, j]*CG.u[j] for j in range(lp.nConstraints))  + CG.u0[1]*CG.pi[i] <= c[i])
+    CG.pi_rule_left = Constraint(range(lp.nVariables), rule=pi_rule_left)
+
+    def pi_rule_right(CG, i):
+        return(sum(Atran[i, j]*CG.v[j] for j in range(lp.nConstraints)) - CG.v0[1]*CG.pi[i] <= c[i])
+    CG.pi_rule_right = Constraint(range(lp.nVariables), rule=pi_rule_right)
+    
+    def pi0_rule_left(CG):
+        return(sum(b[j]*CG.u[j] for j in range(lp.nConstraints)) + CG.u0[1]*CG.pi0[1] >= CG.beta[1])
+        #return(b[0]*CG.v[0] + CG.theta == CG.pi0)
+    CG.pi0_rule_left = Constraint(rule=pi0_rule_left)
+
+    def pi0_rule_right(CG):
+        return(sum(b[j]*CG.v[j] for j in range(lp.nConstraints)) - CG.v0[1]*(CG.pi0[1] + 1) >= CG.beta[1])
+        #return(b[0]*CG.v[0] + CG.theta == CG.pi0)
+    CG.pi0_rule_right = Constraint(rule=pi0_rule_right)
+        
+    def objective_rule(CG):
+        return(-CG.beta[1])
+    CG.objective = Objective(sense=minimize, rule=objective_rule)
+
+    debug_print = True
+    opt = SolverFactory("couenne")
+    instance = CG.create()
+    #instance.pprint()
+    #instance.write("foo.nl", format = "nl")
+    #opt.options['bonmin.bb_log_level'] = 5
+    #opt.options['bonmin.bb_log_interval'] = 1
+    #results = opt.solve(instance, tee=True)
+    results = opt.solve(instance)
+    instance.load(results)
+
+    #multu = np.array([instance.u[i].value for i in range(lp.nConstraints)])
+    disjunction = np.array([instance.pi[i].value for i in range(lp.nVariables)])
+    rhs = instance.pi0[1].value
+    beta = instance.beta[1].value
+    violation =  beta - np.dot(c, sol)
+    if debug_print:
+        print 'Beta: ', beta
+        print 'pi: ', disjunction
+        print 'pi0: ', rhs
+        print 'Violation of cut: ', violation
+
+    if (violation > 1e-6):
+        return [(c, beta)] 
+    return []
     
 def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, 
               value = None):
@@ -218,11 +453,12 @@ def read_instance(module_name = None, file_name = None):
 
 if __name__ == '__main__':
     
-    generate_splits = True
+    generate_bound_splits = True
+    generate_max_viol_splits = False
     generate_GMI = False
-    debug_print = False
+    debug_print = True
     epsilon = 0.01
-    maxiter = 20
+    maxiter = 1
     max_cuts = 10
     display = True
     if not DISPLAY_ENABLED:
@@ -264,8 +500,10 @@ if __name__ == '__main__':
             print 'Integer solution found!'
             break
         cuts = []
-        if generate_splits:
-            cuts += splitCuts(lp, integerIndices, sense)
+        if generate_bound_splits:
+            cuts += boundOptimalSplitCuts(lp, integerIndices, sense, max_coeff=10)
+        if generate_max_viol_splits:
+            cuts += maxViolationSplitCuts(lp, integerIndices, sense, max_coeff=10)
         if generate_GMI:
             cuts += gomoryCut(lp, integerIndices, sense)
         if cuts == []:
