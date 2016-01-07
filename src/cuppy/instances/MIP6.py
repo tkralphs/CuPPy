@@ -44,8 +44,8 @@ rays = []
 #   5,   
 #   7]
 
-#c = [-1, 1]
-c = [1, -1]
+c = [-1, 1]
+#c = [1, -1]
 obj_val = 2 
 
 #Rank 1 inequalities
