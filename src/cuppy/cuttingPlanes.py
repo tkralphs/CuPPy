@@ -204,7 +204,7 @@ def solve(module_name = None, file_name = None, whichCuts = [], debug_print = Fa
             break
         cuts = []
         for (cg, args) in whichCuts:
-            cuts += cg(lp, integerIndices, sense, *args)
+            cuts += cg(lp, integerIndices, sense, sol, **args)
         if cuts == []:
             print 'No cuts found!'
             break
