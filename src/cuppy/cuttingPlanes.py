@@ -36,12 +36,13 @@ def getFraction(x):
     'Return the fraction part of x: x - floor(x)'
     return x - math.floor(x)
     
-def gomoryCut(lp, integerIndices = None, sense = '>=', rowInds = None, 
-              value = None, epsilon = .01):
+def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
+              rowInds = None, value = None, epsilon = .01):
     '''Return the Gomory cut of rows in ``rowInds`` of lp 
     (a CyClpSimplex object)'''
     cuts = []
-    sol = lp.primalVariableSolution['x']
+    if sol == None:
+        sol = lp.primalVariableSolution['x']
     if rowInds is None:
         rowInds = range(lp.nConstraints)
     if integerIndices is None:
