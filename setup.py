@@ -4,7 +4,7 @@ from setuptools import setup
 import setuptools
 
 setup(name='coinor.cuppy',
-      version='0.6.0',
+      version='0.6.1',
       description='Cutting Plane Methods in Python (CuPPy)',
       long_description='''A collection of 'naive' implementations of basic
       cutting plane algorithms in Python. The collection contains a generator
@@ -28,7 +28,7 @@ setup(name='coinor.cuppy',
       license='Eclipse Public License',
       url='https://github.com/tkralphs/CuPPy/',
       namespace_packages=['coinor'],
-      packages=['coinor.cuppy','coinor'],
+      packages=['coinor.cuppy','coinor.cuppy.instances','coinor'],
       package_dir = {'coinor': 'src'},
       install_requires=['coinor.grumpy>=0.7.0', 'pulp', 'cylp>=0.7.0']
      )
