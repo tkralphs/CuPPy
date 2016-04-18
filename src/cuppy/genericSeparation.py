@@ -61,7 +61,9 @@ sys.path.append('instances')
 EPS = 1e-6
 class GenericSeparation(object):
 
-    def __init__(self, origProb, x0):
+    def __init__(self, origProb, x0, pi_init = None):
+        if pi_init == None:
+            pi_init = [(v.name, 0) for v in self.var.values()]
         self.prob = origProb
         self.iter = 1
         self.x0 = x0
@@ -76,7 +78,7 @@ class GenericSeparation(object):
             else:
                 self.c[v] = 0.0
         self.generate_separation_problem()
-        self.piCurrent = dict([(v.name, 0) for v in self.var.values()]) 
+        self.piCurrent = dict([(v.name, pi_init[v.name]) for v in self.var.values()]) 
         self.piPrevious = dict([(v.name, 0) for v in self.var.values()]) 
         self.extremePoints = []
         self.f = Figure()
@@ -141,21 +143,21 @@ class GenericSeparation(object):
                 elif len(self.extremePoints) == 1:
                     self.f.add_point(self.extremePoints[0], radius = 0.05, 
                                      color = 'green')
-                    self.f.add_text(self.extremePoints[0][0]-0.5, 
-                                    self.extremePoints[0][1]-0.08, '$x^0$')
+                    self.f.add_text([self.extremePoints[0][0]-0.5, 
+                                    self.extremePoints[0][1]-0.08], '$x^0$')
                 else:
                     self.f.add_line_segment(self.extremePoints[0], 
                                             self.extremePoints[1], 
                                             color = 'red',
                                             linestyle = 'dashed',
                                             label = 'Convex Hull of Generated Points')
-                self.f.set_xlim(p.plot_min[0], p.plot_max[0])
-                self.f.set_ylim(p.plot_min[1], p.plot_max[1])
+                self.f.set_xlim(p.xlim)
+                self.f.set_ylim(p.ylim)
                 self.f.add_point(xList, radius = 0.05, color = 'red')
-                self.f.add_text(xList[0]-0.5, xList[1]-0.08, '$x^*$')
+                self.f.add_text([xList[0]-0.5, xList[1]-0.08], '$x^*$')
                 dList = (self.piCurrent.values()[0], self.piCurrent.values()[1])
                 self.f.add_line(dList, 1, 
-                                p.plot_max, p.plot_min, color = 'green', 
+                                p.xlim, p.ylim, color = 'green', 
                                 linestyle = 'dashed', label = 'Separating Hyperplane')
                 self.f.show()
             if self.output:
@@ -189,17 +191,18 @@ if __name__ == '__main__':
         p = Polyhedron2D(A = mip.A, b = mip.b)
         f = Figure()
         f.add_polyhedron(p, show_int_points = True, label = 'Polyhedron P')
-        f.set_xlim(p.plot_min[0], p.plot_max[0])
-        f.set_ylim(p.plot_min[1], p.plot_max[1])
+        f.set_xlim(p.xlim)
+        f.set_ylim(p.ylim)
         f.add_point(mip.x_sep, radius = 0.05, color = 'red')
-        f.add_text(mip.x_sep[0]-0.5, mip.x_sep[1]-0.08, '$x^*$')
+        f.add_text([mip.x_sep[0]-0.5, mip.x_sep[1]-0.08], '$x^*$')
         f.show()
+
     # This is the point to be separated 
     x0 = {}
     for index, value in enumerate(mip.x_sep):
         x0[vars[index].name] = value
     i = 0
-    ic = GenericSeparation(prob, x0)
+    ic = GenericSeparation(prob, x0, {'x_0': -1, 'x_1' : 0})
     ic.separate(output = True, p = p)
     print 'separation problem objective value', ic.sepProb.objective.value()
 
