@@ -78,8 +78,8 @@ def disp_relaxation(A, b, cuts = [], sol = None):
     p = Polyhedron2D(A = A, b = b)
     f = Figure()
     f.add_polyhedron(p, label = 'Polyhedron $P$')
-    f.set_xlim([p.xlim[0], p.xlim[1]])
-    f.set_ylim([p.ylim[0], p.ylim[1]])
+    f.set_xlim(p.xlim)
+    f.set_ylim(p.ylim)
     pI = p.make_integer_hull()
     f.add_polyhedron(pI, show_int_points = True, color = 'red',
                      linestyle = 'dashed',
@@ -198,7 +198,7 @@ def solve(module_name = None, file_name = None, whichCuts = [], debug_print = Fa
             print "Current tableaux:"
             print lp.tableau
             print "Current right hand side:\n", rhs
-            print lp.rhs
+            #print lp.rhs
         print 'Current solution: ', sol
         if isInt(sol[integerIndices], epsilon):
             print 'Integer solution found!'
@@ -228,7 +228,7 @@ def solve(module_name = None, file_name = None, whichCuts = [], debug_print = Fa
 
 if __name__ == '__main__':
     
-    solve(module_name = 'MIP6', whichCuts = [(gomoryCut, {})], display = True)
+    solve(module_name = 'MIP6', whichCuts = [(gomoryCut, {})], display = True, debug_print = True)
 
 
 
