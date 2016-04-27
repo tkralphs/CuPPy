@@ -28,7 +28,7 @@ setup(name='coinor.cuppy',
       license='Eclipse Public License',
       url='https://github.com/tkralphs/CuPPy/',
       namespace_packages=['coinor'],
-      packages=['coinor.cuppy','coinor.cuppy.instances','coinor'],
+      packages=['coinor.cuppy','coinor.cuppy.examples','coinor'],
       package_dir = {'coinor': 'src'},
       install_requires=['coinor.grumpy>=0.7.0', 'pulp', 'cylp>=0.7.0']
      )
