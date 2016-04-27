@@ -55,8 +55,10 @@ try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
     from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+from milpInstance import MILPInstance
 import sys
-sys.path.append('instances')
+sys.path.append('examples')
+
 
 EPS = 1e-6
 class GenericSeparation(object):
@@ -185,7 +187,7 @@ def read_instance(module_name):
 if __name__ == '__main__':
     
     display = True
-    prob, vars, mip = read_instance('MIP8')
+    prob, vars, mip = read_instance(module_name = 'MIP8')
 
     if display:
         p = Polyhedron2D(A = mip.A, b = mip.b)

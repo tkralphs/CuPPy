@@ -10,5 +10,17 @@ c = [-1, -1]
 sense = ('Max', '<=')
 integerIndices = [0, 1]
 
-cuts = None
-rhs = None
+if __name__ == '__main__':
+
+    try:
+        from coinor.cuppy.cuttingPlanes import solve, gomoryCut
+        from coinor.cuppy.milpInstance import MILPInstance
+    except ImportError:
+        from src.cuppy.cuttingPlanes import solve, gomoryCut
+        from src.cuppy.milpInstance import MILPInstance
+
+    m = MILPInstance(A = A, b = b, c = c, 
+                     sense = sense, integerIndices = integerIndices,
+                     numVars = numVars)
+    
+    solve(m, whichCuts = [(gomoryCut, {})], display = True, debug_print = True)
