@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>coinor.cuppy.milpInstance</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="coinor.cuppy-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;coinor ::
+        <a href="coinor.cuppy-module.html">Package&nbsp;cuppy</a> ::
+        Module&nbsp;milpInstance
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="coinor.cuppy.milpInstance-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="coinor.cuppy.milpInstance-module.html">Module coinor.cuppy.milpInstance</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-docstring">'''</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"><tt class="py-docstring">Created on Apr 26, 2016</tt> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-docstring">@author: TedR</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-docstring">'''</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">cylp</tt><tt class="py-op">.</tt><tt class="py-name">cy</tt> <tt class="py-keyword">import</tt> <tt class="py-name">CyClpSimplex</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">cylp</tt><tt class="py-op">.</tt><tt class="py-name">py</tt><tt class="py-op">.</tt><tt class="py-name">modeling</tt> <tt class="py-keyword">import</tt> <tt class="py-name">CyLPArray</tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">importlib</tt> <tt class="py-keyword">as</tt> <tt class="py-name">ilib</tt> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">numpy</tt> <tt class="py-keyword">as</tt> <tt class="py-name">np</tt> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt id="link-0" class="py-name" targets="Variable coinor.cuppy.milpInstance.GRUMPY_INSTALLED=coinor.cuppy.milpInstance-module.html#GRUMPY_INSTALLED"><a title="coinor.cuppy.milpInstance.GRUMPY_INSTALLED" class="py-name" href="#" onclick="return doclink('link-0', 'GRUMPY_INSTALLED', 'link-0');">GRUMPY_INSTALLED</a></tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line">    <tt class="py-keyword">from</tt> <tt class="py-name">src</tt><tt class="py-op">.</tt><tt class="py-name">grumpy</tt><tt class="py-op">.</tt><tt class="py-name">polyhedron2D</tt> <tt class="py-keyword">import</tt> <tt class="py-name">Polyhedron2D</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-keyword">except</tt> <tt class="py-name">ImportError</tt><tt class="py-op">:</tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line">    <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line">        <tt class="py-keyword">from</tt> <tt class="py-name">coinor</tt><tt class="py-op">.</tt><tt class="py-name">grumpy</tt><tt class="py-op">.</tt><tt class="py-name">polyhedron2D</tt> <tt class="py-keyword">import</tt> <tt class="py-name">Polyhedron2D</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line">    <tt class="py-keyword">except</tt> <tt class="py-name">ImportError</tt><tt class="py-op">:</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line">        <tt id="link-1" class="py-name"><a title="coinor.cuppy.milpInstance.GRUMPY_INSTALLED" class="py-name" href="#" onclick="return doclink('link-1', 'GRUMPY_INSTALLED', 'link-0');">GRUMPY_INSTALLED</a></tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"> </tt>
+<a name="MILPInstance"></a><div id="MILPInstance-def"><a name="L19"></a><tt class="py-lineno">19</tt> <a class="py-toggle" href="#" id="MILPInstance-toggle" onclick="return toggle('MILPInstance');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="coinor.cuppy.milpInstance.MILPInstance-class.html">MILPInstance</a><tt class="py-op">:</tt> </tt>
+</div><div id="MILPInstance-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="MILPInstance-expanded"><a name="MILPInstance.__init__"></a><div id="MILPInstance.__init__-def"><a name="L20"></a><tt class="py-lineno">20</tt> <a class="py-toggle" href="#" id="MILPInstance.__init__-toggle" onclick="return toggle('MILPInstance.__init__');">-</a><tt class="py-line">    <tt class="py-keyword">def</tt> <a class="py-def-name" href="coinor.cuppy.milpInstance.MILPInstance-class.html#__init__">__init__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">module_name</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">file_name</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line">                 <tt class="py-param">A</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">b</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">c</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line">                 <tt class="py-param">points</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">rays</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line">                 <tt class="py-param">sense</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt> <tt class="py-param">integerIndices</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">,</tt>  </tt>
+<a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line">                 <tt class="py-param">numVars</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="MILPInstance.__init__-collapsed" style="display:none;" pad="++" indent="++++++++"></div><div id="MILPInstance.__init__-expanded"><a name="L25"></a><tt class="py-lineno">25</tt>  <tt class="py-line"> </tt>
+<a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line">        <tt class="py-keyword">if</tt> <tt class="py-name">file_name</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">            <tt class="py-comment"># We got a file name, so ignore everything else and read in the instance</tt> </tt>
+<a name="L28"></a><tt class="py-lineno">28</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">=</tt> <tt class="py-name">CyClpSimplex</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">            <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">extractCyLPModel</tt><tt class="py-op">(</tt><tt class="py-name">file_name</tt><tt class="py-op">)</tt> </tt>
+<a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line">            <tt id="link-2" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.integerIndices=coinor.cuppy.instances.MIP1-module.html#integerIndices,Variable coinor.cuppy.instances.MIP2.integerIndices=coinor.cuppy.instances.MIP2-module.html#integerIndices,Variable coinor.cuppy.instances.MIP3.integerIndices=coinor.cuppy.instances.MIP3-module.html#integerIndices,Variable coinor.cuppy.instances.MIP4.integerIndices=coinor.cuppy.instances.MIP4-module.html#integerIndices,Variable coinor.cuppy.instances.MIP5.integerIndices=coinor.cuppy.instances.MIP5-module.html#integerIndices,Variable coinor.cuppy.instances.MIP6.integerIndices=coinor.cuppy.instances.MIP6-module.html#integerIndices,Variable coinor.cuppy.instances.MIP7.integerIndices=coinor.cuppy.instances.MIP7-module.html#integerIndices"><a title="coinor.cuppy.instances.MIP1.integerIndices
+coinor.cuppy.instances.MIP2.integerIndices
+coinor.cuppy.instances.MIP3.integerIndices
+coinor.cuppy.instances.MIP4.integerIndices
+coinor.cuppy.instances.MIP5.integerIndices
+coinor.cuppy.instances.MIP6.integerIndices
+coinor.cuppy.instances.MIP7.integerIndices" class="py-name" href="#" onclick="return doclink('link-2', 'integerIndices', 'link-2');">integerIndices</a></tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">i</tt> <tt class="py-keyword">for</tt> <tt class="py-op">(</tt><tt class="py-name">i</tt><tt class="py-op">,</tt> <tt class="py-name">j</tt><tt class="py-op">)</tt> <tt class="py-keyword">in</tt> <tt class="py-name">enumerate</tt><tt class="py-op">(</tt><tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">integerInformation</tt><tt class="py-op">)</tt> <tt class="py-keyword">if</tt> <tt class="py-name">j</tt> <tt class="py-op">==</tt> <tt class="py-name">True</tt><tt class="py-op">]</tt> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">            <tt class="py-name">infinity</tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">getCoinInfinity</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L32"></a><tt class="py-lineno">32</tt>  <tt class="py-line">            <tt id="link-3" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.A=coinor.cuppy.instances.MIP1-module.html#A,Variable coinor.cuppy.instances.MIP2.A=coinor.cuppy.instances.MIP2-module.html#A,Variable coinor.cuppy.instances.MIP3.A=coinor.cuppy.instances.MIP3-module.html#A,Variable coinor.cuppy.instances.MIP4.A=coinor.cuppy.instances.MIP4-module.html#A,Variable coinor.cuppy.instances.MIP5.A=coinor.cuppy.instances.MIP5-module.html#A,Variable coinor.cuppy.instances.MIP6.A=coinor.cuppy.instances.MIP6-module.html#A,Variable coinor.cuppy.instances.MIP7.A=coinor.cuppy.instances.MIP7-module.html#A,Variable coinor.cuppy.instances.MIP8.A=coinor.cuppy.instances.MIP8-module.html#A"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-3', 'A', 'link-3');">A</a></tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">coefMatrix</tt> </tt>
+<a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">            <tt id="link-4" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.b=coinor.cuppy.instances.MIP1-module.html#b,Variable coinor.cuppy.instances.MIP2.b=coinor.cuppy.instances.MIP2-module.html#b,Variable coinor.cuppy.instances.MIP3.b=coinor.cuppy.instances.MIP3-module.html#b,Variable coinor.cuppy.instances.MIP4.b=coinor.cuppy.instances.MIP4-module.html#b,Variable coinor.cuppy.instances.MIP5.b=coinor.cuppy.instances.MIP5-module.html#b,Variable coinor.cuppy.instances.MIP6.b=coinor.cuppy.instances.MIP6-module.html#b,Variable coinor.cuppy.instances.MIP7.b=coinor.cuppy.instances.MIP7-module.html#b,Variable coinor.cuppy.instances.MIP8.b=coinor.cuppy.instances.MIP8-module.html#b"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-4', 'b', 'link-4');">b</a></tt> <tt class="py-op">=</tt> <tt class="py-name">CyLPArray</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-number">0</tt> <tt class="py-keyword">for</tt> <tt class="py-name">_</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">nRows</tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line">            <tt class="py-keyword">for</tt> <tt class="py-name">i</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">nRows</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L35"></a><tt class="py-lineno">35</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">constraintsLower</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">&gt;</tt> <tt class="py-op">-</tt><tt class="py-name">infinity</tt><tt class="py-op">:</tt> </tt>
+<a name="L36"></a><tt class="py-lineno">36</tt>  <tt class="py-line">                    <tt class="py-keyword">if</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">constraintsUpper</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">infinity</tt><tt class="py-op">:</tt> </tt>
+<a name="L37"></a><tt class="py-lineno">37</tt>  <tt class="py-line">                        <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">'Cannot handle ranged constraints'</tt><tt class="py-op">)</tt> </tt>
+<a name="L38"></a><tt class="py-lineno">38</tt>  <tt class="py-line">                    <tt id="link-5" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-5', 'b', 'link-4');">b</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">-</tt><tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">constraintsLower</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L39"></a><tt class="py-lineno">39</tt>  <tt class="py-line">                    <tt class="py-keyword">for</tt> <tt class="py-name">j</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">nCols</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L40"></a><tt class="py-lineno">40</tt>  <tt class="py-line">                        <tt id="link-6" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-6', 'A', 'link-3');">A</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">,</tt> <tt class="py-name">j</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-op">-</tt><tt id="link-7" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-7', 'A', 'link-3');">A</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">,</tt> <tt class="py-name">j</tt><tt class="py-op">]</tt> </tt>
+<a name="L41"></a><tt class="py-lineno">41</tt>  <tt class="py-line">                <tt class="py-keyword">elif</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">constraintsUpper</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">&lt;</tt> <tt class="py-name">infinity</tt><tt class="py-op">:</tt> </tt>
+<a name="L42"></a><tt class="py-lineno">42</tt>  <tt class="py-line">                    <tt id="link-8" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-8', 'b', 'link-4');">b</a></tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">constraintsUpper</tt><tt class="py-op">[</tt><tt class="py-name">i</tt><tt class="py-op">]</tt> </tt>
+<a name="L43"></a><tt class="py-lineno">43</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L44"></a><tt class="py-lineno">44</tt>  <tt class="py-line">                    <tt class="py-keyword">raise</tt> <tt class="py-name">Exception</tt><tt class="py-op">(</tt><tt class="py-string">'Constraint with no bounds detected'</tt><tt class="py-op">)</tt> </tt>
+<a name="L45"></a><tt class="py-lineno">45</tt>  <tt class="py-line">            <tt id="link-9" class="py-name" targets="Variable coinor.cuppy.instances.MIP8.x=coinor.cuppy.instances.MIP8-module.html#x"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-9', 'x', 'link-9');">x</a></tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">addVariable</tt><tt class="py-op">(</tt><tt class="py-string">'x'</tt><tt class="py-op">,</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">nCols</tt><tt class="py-op">)</tt> </tt>
+<a name="L46"></a><tt class="py-lineno">46</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt id="link-10" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-10', 'A', 'link-3');">A</a></tt> <tt class="py-op">*</tt> <tt id="link-11" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-11', 'x', 'link-9');">x</a></tt> <tt class="py-op">&lt;=</tt> <tt id="link-12" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-12', 'b', 'link-4');">b</a></tt> </tt>
+<a name="L47"></a><tt class="py-lineno">47</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt id="link-13" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-13', 'x', 'link-9');">x</a></tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">variablesUpper</tt> </tt>
+<a name="L48"></a><tt class="py-lineno">48</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt id="link-14" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-14', 'x', 'link-9');">x</a></tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">variablesLower</tt> </tt>
+<a name="L49"></a><tt class="py-lineno">49</tt>  <tt class="py-line">            <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">objective</tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">objective</tt> </tt>
+<a name="L50"></a><tt class="py-lineno">50</tt>  <tt class="py-line">     </tt>
+<a name="L51"></a><tt class="py-lineno">51</tt>  <tt class="py-line">        <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L52"></a><tt class="py-lineno">52</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-name">module_name</tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L53"></a><tt class="py-lineno">53</tt>  <tt class="py-line">                <tt class="py-comment"># We got a module name, read the data from there</tt> </tt>
+<a name="L54"></a><tt class="py-lineno">54</tt>  <tt class="py-line">                <tt class="py-name">mip</tt> <tt class="py-op">=</tt> <tt class="py-name">ilib</tt><tt class="py-op">.</tt><tt class="py-name">import_module</tt><tt class="py-op">(</tt><tt class="py-name">module_name</tt><tt class="py-op">)</tt> </tt>
+<a name="L55"></a><tt class="py-lineno">55</tt>  <tt class="py-line">                <tt id="link-15" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-15', 'A', 'link-3');">A</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-16', 'A', 'link-3');">A</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'A'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L56"></a><tt class="py-lineno">56</tt>  <tt class="py-line">                <tt id="link-17" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-17', 'b', 'link-4');">b</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-18', 'b', 'link-4');">b</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'b'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L57"></a><tt class="py-lineno">57</tt>  <tt class="py-line">                <tt id="link-19" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.c=coinor.cuppy.instances.MIP1-module.html#c,Variable coinor.cuppy.instances.MIP2.c=coinor.cuppy.instances.MIP2-module.html#c,Variable coinor.cuppy.instances.MIP3.c=coinor.cuppy.instances.MIP3-module.html#c,Variable coinor.cuppy.instances.MIP4.c=coinor.cuppy.instances.MIP4-module.html#c,Variable coinor.cuppy.instances.MIP6.c=coinor.cuppy.instances.MIP6-module.html#c,Variable coinor.cuppy.instances.MIP7.c=coinor.cuppy.instances.MIP7-module.html#c,Variable coinor.cuppy.instances.MIP8.c=coinor.cuppy.instances.MIP8-module.html#c"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-19', 'c', 'link-19');">c</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-20" class="py-name"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-20', 'c', 'link-19');">c</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'c'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L58"></a><tt class="py-lineno">58</tt>  <tt class="py-line">                <tt id="link-21" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.points=coinor.cuppy.instances.MIP1-module.html#points,Variable coinor.cuppy.instances.MIP2.points=coinor.cuppy.instances.MIP2-module.html#points,Variable coinor.cuppy.instances.MIP3.points=coinor.cuppy.instances.MIP3-module.html#points,Variable coinor.cuppy.instances.MIP5.points=coinor.cuppy.instances.MIP5-module.html#points,Variable coinor.cuppy.instances.MIP6.points=coinor.cuppy.instances.MIP6-module.html#points,Variable coinor.cuppy.instances.MIP7.points=coinor.cuppy.instances.MIP7-module.html#points"><a title="coinor.cuppy.instances.MIP1.points
+coinor.cuppy.instances.MIP2.points
+coinor.cuppy.instances.MIP3.points
+coinor.cuppy.instances.MIP5.points
+coinor.cuppy.instances.MIP6.points
+coinor.cuppy.instances.MIP7.points" class="py-name" href="#" onclick="return doclink('link-21', 'points', 'link-21');">points</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-22" class="py-name"><a title="coinor.cuppy.instances.MIP1.points
+coinor.cuppy.instances.MIP2.points
+coinor.cuppy.instances.MIP3.points
+coinor.cuppy.instances.MIP5.points
+coinor.cuppy.instances.MIP6.points
+coinor.cuppy.instances.MIP7.points" class="py-name" href="#" onclick="return doclink('link-22', 'points', 'link-21');">points</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'points'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L59"></a><tt class="py-lineno">59</tt>  <tt class="py-line">                <tt id="link-23" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.rays=coinor.cuppy.instances.MIP1-module.html#rays,Variable coinor.cuppy.instances.MIP2.rays=coinor.cuppy.instances.MIP2-module.html#rays,Variable coinor.cuppy.instances.MIP3.rays=coinor.cuppy.instances.MIP3-module.html#rays,Variable coinor.cuppy.instances.MIP5.rays=coinor.cuppy.instances.MIP5-module.html#rays,Variable coinor.cuppy.instances.MIP6.rays=coinor.cuppy.instances.MIP6-module.html#rays,Variable coinor.cuppy.instances.MIP7.rays=coinor.cuppy.instances.MIP7-module.html#rays"><a title="coinor.cuppy.instances.MIP1.rays
+coinor.cuppy.instances.MIP2.rays
+coinor.cuppy.instances.MIP3.rays
+coinor.cuppy.instances.MIP5.rays
+coinor.cuppy.instances.MIP6.rays
+coinor.cuppy.instances.MIP7.rays" class="py-name" href="#" onclick="return doclink('link-23', 'rays', 'link-23');">rays</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-24" class="py-name"><a title="coinor.cuppy.instances.MIP1.rays
+coinor.cuppy.instances.MIP2.rays
+coinor.cuppy.instances.MIP3.rays
+coinor.cuppy.instances.MIP5.rays
+coinor.cuppy.instances.MIP6.rays
+coinor.cuppy.instances.MIP7.rays" class="py-name" href="#" onclick="return doclink('link-24', 'rays', 'link-23');">rays</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'rays'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L60"></a><tt class="py-lineno">60</tt>  <tt class="py-line">                <tt id="link-25" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.sense=coinor.cuppy.instances.MIP1-module.html#sense,Variable coinor.cuppy.instances.MIP2.sense=coinor.cuppy.instances.MIP2-module.html#sense,Variable coinor.cuppy.instances.MIP3.sense=coinor.cuppy.instances.MIP3-module.html#sense,Variable coinor.cuppy.instances.MIP4.sense=coinor.cuppy.instances.MIP4-module.html#sense,Variable coinor.cuppy.instances.MIP5.sense=coinor.cuppy.instances.MIP5-module.html#sense,Variable coinor.cuppy.instances.MIP6.sense=coinor.cuppy.instances.MIP6-module.html#sense,Variable coinor.cuppy.instances.MIP7.sense=coinor.cuppy.instances.MIP7-module.html#sense"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-25', 'sense', 'link-25');">sense</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-26" class="py-name"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-26', 'sense', 'link-25');">sense</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'sense'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L61"></a><tt class="py-lineno">61</tt>  <tt class="py-line">                <tt id="link-27" class="py-name" targets="Variable coinor.cuppy.instances.MIP1.numVars=coinor.cuppy.instances.MIP1-module.html#numVars,Variable coinor.cuppy.instances.MIP2.numVars=coinor.cuppy.instances.MIP2-module.html#numVars,Variable coinor.cuppy.instances.MIP3.numVars=coinor.cuppy.instances.MIP3-module.html#numVars,Variable coinor.cuppy.instances.MIP4.numVars=coinor.cuppy.instances.MIP4-module.html#numVars,Variable coinor.cuppy.instances.MIP6.numVars=coinor.cuppy.instances.MIP6-module.html#numVars,Variable coinor.cuppy.instances.MIP7.numVars=coinor.cuppy.instances.MIP7-module.html#numVars"><a title="coinor.cuppy.instances.MIP1.numVars
+coinor.cuppy.instances.MIP2.numVars
+coinor.cuppy.instances.MIP3.numVars
+coinor.cuppy.instances.MIP4.numVars
+coinor.cuppy.instances.MIP6.numVars
+coinor.cuppy.instances.MIP7.numVars" class="py-name" href="#" onclick="return doclink('link-27', 'numVars', 'link-27');">numVars</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="coinor.cuppy.instances.MIP1.numVars
+coinor.cuppy.instances.MIP2.numVars
+coinor.cuppy.instances.MIP3.numVars
+coinor.cuppy.instances.MIP4.numVars
+coinor.cuppy.instances.MIP6.numVars
+coinor.cuppy.instances.MIP7.numVars" class="py-name" href="#" onclick="return doclink('link-28', 'numVars', 'link-27');">numVars</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'numVars'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L62"></a><tt class="py-lineno">62</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-29" class="py-name" targets="Variable coinor.cuppy.instances.MIP8.x_sep=coinor.cuppy.instances.MIP8-module.html#x_sep"><a title="coinor.cuppy.instances.MIP8.x_sep" class="py-name" href="#" onclick="return doclink('link-29', 'x_sep', 'link-29');">x_sep</a></tt> <tt class="py-op">=</tt> <tt class="py-name">mip</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="coinor.cuppy.instances.MIP8.x_sep" class="py-name" href="#" onclick="return doclink('link-30', 'x_sep', 'link-29');">x_sep</a></tt> <tt class="py-keyword">if</tt> <tt class="py-name">hasattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'x_sep'</tt><tt class="py-op">)</tt> <tt class="py-keyword">else</tt> <tt class="py-name">None</tt> </tt>
+<a name="L63"></a><tt class="py-lineno">63</tt>  <tt class="py-line">        </tt>
+<a name="L64"></a><tt class="py-lineno">64</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">=</tt> <tt class="py-name">CyClpSimplex</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno">65</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt id="link-31" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-31', 'A', 'link-3');">A</a></tt> <tt class="py-keyword">is</tt> <tt class="py-keyword">not</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L66"></a><tt class="py-lineno">66</tt>  <tt class="py-line">                <tt id="link-32" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-32', 'A', 'link-3');">A</a></tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">matrix</tt><tt class="py-op">(</tt><tt id="link-33" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-33', 'A', 'link-3');">A</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L67"></a><tt class="py-lineno">67</tt>  <tt class="py-line">                <tt id="link-34" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-34', 'b', 'link-4');">b</a></tt> <tt class="py-op">=</tt> <tt class="py-name">CyLPArray</tt><tt class="py-op">(</tt><tt id="link-35" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-35', 'b', 'link-4');">b</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno">68</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt id="link-36" class="py-name"><a title="coinor.cuppy.instances.MIP1.numVars
+coinor.cuppy.instances.MIP2.numVars
+coinor.cuppy.instances.MIP3.numVars
+coinor.cuppy.instances.MIP4.numVars
+coinor.cuppy.instances.MIP6.numVars
+coinor.cuppy.instances.MIP7.numVars" class="py-name" href="#" onclick="return doclink('link-36', 'numVars', 'link-27');">numVars</a></tt> <tt class="py-op">&lt;=</tt> <tt class="py-number">2</tt> <tt class="py-keyword">and</tt> <tt id="link-37" class="py-name"><a title="coinor.cuppy.milpInstance.GRUMPY_INSTALLED" class="py-name" href="#" onclick="return doclink('link-37', 'GRUMPY_INSTALLED', 'link-0');">GRUMPY_INSTALLED</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L69"></a><tt class="py-lineno">69</tt>  <tt class="py-line">                <tt class="py-name">p</tt> <tt class="py-op">=</tt> <tt class="py-name">Polyhedron2D</tt><tt class="py-op">(</tt><tt id="link-38" class="py-name"><a title="coinor.cuppy.instances.MIP1.points
+coinor.cuppy.instances.MIP2.points
+coinor.cuppy.instances.MIP3.points
+coinor.cuppy.instances.MIP5.points
+coinor.cuppy.instances.MIP6.points
+coinor.cuppy.instances.MIP7.points" class="py-name" href="#" onclick="return doclink('link-38', 'points', 'link-21');">points</a></tt> <tt class="py-op">=</tt> <tt id="link-39" class="py-name"><a title="coinor.cuppy.instances.MIP1.points
+coinor.cuppy.instances.MIP2.points
+coinor.cuppy.instances.MIP3.points
+coinor.cuppy.instances.MIP5.points
+coinor.cuppy.instances.MIP6.points
+coinor.cuppy.instances.MIP7.points" class="py-name" href="#" onclick="return doclink('link-39', 'points', 'link-21');">points</a></tt><tt class="py-op">,</tt> <tt id="link-40" class="py-name"><a title="coinor.cuppy.instances.MIP1.rays
+coinor.cuppy.instances.MIP2.rays
+coinor.cuppy.instances.MIP3.rays
+coinor.cuppy.instances.MIP5.rays
+coinor.cuppy.instances.MIP6.rays
+coinor.cuppy.instances.MIP7.rays" class="py-name" href="#" onclick="return doclink('link-40', 'rays', 'link-23');">rays</a></tt> <tt class="py-op">=</tt> <tt id="link-41" class="py-name"><a title="coinor.cuppy.instances.MIP1.rays
+coinor.cuppy.instances.MIP2.rays
+coinor.cuppy.instances.MIP3.rays
+coinor.cuppy.instances.MIP5.rays
+coinor.cuppy.instances.MIP6.rays
+coinor.cuppy.instances.MIP7.rays" class="py-name" href="#" onclick="return doclink('link-41', 'rays', 'link-23');">rays</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L70"></a><tt class="py-lineno">70</tt>  <tt class="py-line">                <tt id="link-42" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-42', 'A', 'link-3');">A</a></tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">matrix</tt><tt class="py-op">(</tt><tt class="py-name">p</tt><tt class="py-op">.</tt><tt class="py-name">hrep</tt><tt class="py-op">.</tt><tt id="link-43" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-43', 'A', 'link-3');">A</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L71"></a><tt class="py-lineno">71</tt>  <tt class="py-line">                <tt id="link-44" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-44', 'b', 'link-4');">b</a></tt> <tt class="py-op">=</tt> <tt class="py-name">np</tt><tt class="py-op">.</tt><tt class="py-name">matrix</tt><tt class="py-op">(</tt><tt class="py-name">p</tt><tt class="py-op">.</tt><tt class="py-name">hrep</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-45', 'b', 'link-4');">b</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L72"></a><tt class="py-lineno">72</tt>  <tt class="py-line">            <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L73"></a><tt class="py-lineno">73</tt>  <tt class="py-line">                <tt class="py-keyword">raise</tt><tt class="py-op">(</tt><tt class="py-string">"Must specify problem in inequality form with more than two variables\n"</tt><tt class="py-op">+</tt> </tt>
+<a name="L74"></a><tt class="py-lineno">74</tt>  <tt class="py-line">                      <tt class="py-string">"or when GrUMPy is not installed"</tt><tt class="py-op">)</tt>    </tt>
+<a name="L75"></a><tt class="py-lineno">75</tt>  <tt class="py-line">         </tt>
+<a name="L76"></a><tt class="py-lineno">76</tt>  <tt class="py-line">            <tt class="py-comment">#Warning: At the moment, you must put bound constraints in explicitly for split cuts</tt> </tt>
+<a name="L77"></a><tt class="py-lineno">77</tt>  <tt class="py-line">            <tt class="py-name">x_l</tt> <tt class="py-op">=</tt> <tt class="py-name">CyLPArray</tt><tt class="py-op">(</tt><tt class="py-op">[</tt><tt class="py-number">0</tt> <tt class="py-keyword">for</tt> <tt class="py-name">_</tt> <tt class="py-keyword">in</tt> <tt class="py-name">range</tt><tt class="py-op">(</tt><tt id="link-46" class="py-name"><a title="coinor.cuppy.instances.MIP1.numVars
+coinor.cuppy.instances.MIP2.numVars
+coinor.cuppy.instances.MIP3.numVars
+coinor.cuppy.instances.MIP4.numVars
+coinor.cuppy.instances.MIP6.numVars
+coinor.cuppy.instances.MIP7.numVars" class="py-name" href="#" onclick="return doclink('link-46', 'numVars', 'link-27');">numVars</a></tt><tt class="py-op">)</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L78"></a><tt class="py-lineno">78</tt>  <tt class="py-line">                 </tt>
+<a name="L79"></a><tt class="py-lineno">79</tt>  <tt class="py-line">            <tt id="link-47" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-47', 'x', 'link-9');">x</a></tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">addVariable</tt><tt class="py-op">(</tt><tt class="py-string">'x'</tt><tt class="py-op">,</tt> <tt id="link-48" class="py-name"><a title="coinor.cuppy.instances.MIP1.numVars
+coinor.cuppy.instances.MIP2.numVars
+coinor.cuppy.instances.MIP3.numVars
+coinor.cuppy.instances.MIP4.numVars
+coinor.cuppy.instances.MIP6.numVars
+coinor.cuppy.instances.MIP7.numVars" class="py-name" href="#" onclick="return doclink('link-48', 'numVars', 'link-27');">numVars</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L80"></a><tt class="py-lineno">80</tt>  <tt class="py-line">             </tt>
+<a name="L81"></a><tt class="py-lineno">81</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt id="link-49" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-49', 'x', 'link-9');">x</a></tt> <tt class="py-op">&gt;=</tt> <tt class="py-name">x_l</tt> </tt>
+<a name="L82"></a><tt class="py-lineno">82</tt>  <tt class="py-line">            <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L83"></a><tt class="py-lineno">83</tt>  <tt class="py-line">                <tt class="py-name">x_u</tt> <tt class="py-op">=</tt> <tt class="py-name">CyLPArray</tt><tt class="py-op">(</tt><tt class="py-name">getattr</tt><tt class="py-op">(</tt><tt class="py-name">mip</tt><tt class="py-op">,</tt> <tt class="py-string">'x_u'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L84"></a><tt class="py-lineno">84</tt>  <tt class="py-line">                <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt id="link-50" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-50', 'x', 'link-9');">x</a></tt> <tt class="py-op">&lt;=</tt> <tt class="py-name">x_u</tt> </tt>
+<a name="L85"></a><tt class="py-lineno">85</tt>  <tt class="py-line">            <tt class="py-keyword">except</tt><tt class="py-op">:</tt> </tt>
+<a name="L86"></a><tt class="py-lineno">86</tt>  <tt class="py-line">                <tt class="py-name">x_u</tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt>         </tt>
+<a name="L87"></a><tt class="py-lineno">87</tt>  <tt class="py-line">            <tt class="py-name">lp</tt> <tt class="py-op">+=</tt> <tt class="py-op">(</tt><tt id="link-51" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-51', 'A', 'link-3');">A</a></tt> <tt class="py-op">*</tt> <tt id="link-52" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-52', 'x', 'link-9');">x</a></tt> <tt class="py-op">&lt;=</tt> <tt id="link-53" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-53', 'b', 'link-4');">b</a></tt> <tt class="py-keyword">if</tt> <tt id="link-54" class="py-name"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-54', 'sense', 'link-25');">sense</a></tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">'&lt;='</tt> <tt class="py-keyword">else</tt> </tt>
+<a name="L88"></a><tt class="py-lineno">88</tt>  <tt class="py-line">                   <tt id="link-55" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-55', 'A', 'link-3');">A</a></tt> <tt class="py-op">*</tt> <tt id="link-56" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-56', 'x', 'link-9');">x</a></tt> <tt class="py-op">&gt;=</tt> <tt id="link-57" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-57', 'b', 'link-4');">b</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L89"></a><tt class="py-lineno">89</tt>  <tt class="py-line">            <tt id="link-58" class="py-name"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-58', 'c', 'link-19');">c</a></tt> <tt class="py-op">=</tt> <tt class="py-name">CyLPArray</tt><tt class="py-op">(</tt><tt id="link-59" class="py-name"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-59', 'c', 'link-19');">c</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno">90</tt>  <tt class="py-line">            <tt class="py-name">lp</tt><tt class="py-op">.</tt><tt class="py-name">objective</tt> <tt class="py-op">=</tt> <tt class="py-op">-</tt><tt id="link-60" class="py-name"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-60', 'c', 'link-19');">c</a></tt> <tt class="py-op">*</tt> <tt id="link-61" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-61', 'x', 'link-9');">x</a></tt> <tt class="py-keyword">if</tt> <tt id="link-62" class="py-name"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-62', 'sense', 'link-25');">sense</a></tt><tt class="py-op">[</tt><tt class="py-number">0</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-string">'Max'</tt> <tt class="py-keyword">else</tt> <tt id="link-63" class="py-name"><a title="coinor.cuppy.instances.MIP1.c
+coinor.cuppy.instances.MIP2.c
+coinor.cuppy.instances.MIP3.c
+coinor.cuppy.instances.MIP4.c
+coinor.cuppy.instances.MIP6.c
+coinor.cuppy.instances.MIP7.c
+coinor.cuppy.instances.MIP8.c" class="py-name" href="#" onclick="return doclink('link-63', 'c', 'link-19');">c</a></tt> <tt class="py-op">*</tt> <tt id="link-64" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-64', 'x', 'link-9');">x</a></tt> </tt>
+<a name="L91"></a><tt class="py-lineno">91</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">lp</tt> <tt class="py-op">=</tt> <tt class="py-name">lp</tt> </tt>
+<a name="L92"></a><tt class="py-lineno">92</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-65" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-65', 'x', 'link-9');">x</a></tt> <tt class="py-op">=</tt> <tt id="link-66" class="py-name"><a title="coinor.cuppy.instances.MIP8.x" class="py-name" href="#" onclick="return doclink('link-66', 'x', 'link-9');">x</a></tt> </tt>
+<a name="L93"></a><tt class="py-lineno">93</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-67" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-67', 'A', 'link-3');">A</a></tt> <tt class="py-op">=</tt> <tt id="link-68" class="py-name"><a title="coinor.cuppy.instances.MIP1.A
+coinor.cuppy.instances.MIP2.A
+coinor.cuppy.instances.MIP3.A
+coinor.cuppy.instances.MIP4.A
+coinor.cuppy.instances.MIP5.A
+coinor.cuppy.instances.MIP6.A
+coinor.cuppy.instances.MIP7.A
+coinor.cuppy.instances.MIP8.A" class="py-name" href="#" onclick="return doclink('link-68', 'A', 'link-3');">A</a></tt> </tt>
+<a name="L94"></a><tt class="py-lineno">94</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-69" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-69', 'b', 'link-4');">b</a></tt> <tt class="py-op">=</tt> <tt id="link-70" class="py-name"><a title="coinor.cuppy.instances.MIP1.b
+coinor.cuppy.instances.MIP2.b
+coinor.cuppy.instances.MIP3.b
+coinor.cuppy.instances.MIP4.b
+coinor.cuppy.instances.MIP5.b
+coinor.cuppy.instances.MIP6.b
+coinor.cuppy.instances.MIP7.b
+coinor.cuppy.instances.MIP8.b" class="py-name" href="#" onclick="return doclink('link-70', 'b', 'link-4');">b</a></tt> </tt>
+<a name="L95"></a><tt class="py-lineno">95</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-71" class="py-name"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-71', 'sense', 'link-25');">sense</a></tt> <tt class="py-op">=</tt> <tt id="link-72" class="py-name"><a title="coinor.cuppy.instances.MIP1.sense
+coinor.cuppy.instances.MIP2.sense
+coinor.cuppy.instances.MIP3.sense
+coinor.cuppy.instances.MIP4.sense
+coinor.cuppy.instances.MIP5.sense
+coinor.cuppy.instances.MIP6.sense
+coinor.cuppy.instances.MIP7.sense" class="py-name" href="#" onclick="return doclink('link-72', 'sense', 'link-25');">sense</a></tt><tt class="py-op">[</tt><tt class="py-number">1</tt><tt class="py-op">]</tt> </tt>
+<a name="L96"></a><tt class="py-lineno">96</tt>  <tt class="py-line">            <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-73" class="py-name"><a title="coinor.cuppy.instances.MIP1.integerIndices
+coinor.cuppy.instances.MIP2.integerIndices
+coinor.cuppy.instances.MIP3.integerIndices
+coinor.cuppy.instances.MIP4.integerIndices
+coinor.cuppy.instances.MIP5.integerIndices
+coinor.cuppy.instances.MIP6.integerIndices
+coinor.cuppy.instances.MIP7.integerIndices" class="py-name" href="#" onclick="return doclink('link-73', 'integerIndices', 'link-2');">integerIndices</a></tt> <tt class="py-op">=</tt> <tt id="link-74" class="py-name"><a title="coinor.cuppy.instances.MIP1.integerIndices
+coinor.cuppy.instances.MIP2.integerIndices
+coinor.cuppy.instances.MIP3.integerIndices
+coinor.cuppy.instances.MIP4.integerIndices
+coinor.cuppy.instances.MIP5.integerIndices
+coinor.cuppy.instances.MIP6.integerIndices
+coinor.cuppy.instances.MIP7.integerIndices" class="py-name" href="#" onclick="return doclink('link-74', 'integerIndices', 'link-2');">integerIndices</a></tt> </tt>
+</div></div><a name="L97"></a><tt class="py-lineno">97</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+  <!-- Home link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="coinor.cuppy-module.html">Home</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sun May 01 00:16:54 2016
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
