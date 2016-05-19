@@ -97,7 +97,7 @@ def solve(m, whichCuts = [],
     if not DISPLAY_ENABLED:
         display = False
         
-    if m.lp.nCols > 2:
+    if m.lp.nCols > 2 or m.A is None:
         display = False
     m.lp.logLevel = 0
     

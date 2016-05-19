@@ -22,12 +22,12 @@ class MILPInstance:
                  points = None, rays = None,
                  sense = None, integerIndices = None, 
                  numVars = None):
-
+        
         if file_name is not None:
             # We got a file name, so ignore everything else and read in the instance
             lp = CyClpSimplex()
             lp.extractCyLPModel(file_name)
-            integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
+            self.integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
             infinity = lp.getCoinInfinity()
             A = lp.coefMatrix
             b = CyLPArray([0 for _ in range(lp.nRows)])
@@ -47,24 +47,35 @@ class MILPInstance:
             lp += x <= lp.variablesUpper
             lp += x >= lp.variablesLower
             lp.objective = lp.objective
-    
+            self.A = None
+            self.b = None
+            self.c = None
+            self.sense = '<='
+            numVars = lp.nCols
         else:
             if module_name is not None:
                 # We got a module name, read the data from there
                 mip = ilib.import_module(module_name)
-                A = mip.A if hasattr(mip, 'A') else None
-                b = mip.b if hasattr(mip, 'b') else None
-                c = mip.c if hasattr(mip, 'c') else None
+                self.A = mip.A if hasattr(mip, 'A') else None
+                self.b = mip.b if hasattr(mip, 'b') else None
                 points = mip.points if hasattr(mip, 'points') else None
                 rays = mip.rays if hasattr(mip, 'rays') else None
-                sense = mip.sense if hasattr(mip, 'sense') else None
+                self.c = mip.c if hasattr(mip, 'c') else None
+                self.sense = mip.sense[1] if hasattr(mip, 'sense') else None
+                self.integerIndices = mip.integerIndices if hasattr(mip, 'integerIndices') else None
                 numVars = mip.numVars if hasattr(mip, 'numVars') else None
                 self.x_sep = mip.x_sep if hasattr(mip, 'x_sep') else None
+                if numVars is None and mip.A is not None:
+                    numVars = len(mip.A)
        
+            if numVars is None:
+                raise("Must specify number of variables when problem is not"+
+                      "in inequality form")   
+                
             lp = CyClpSimplex()
-            if A is not None:
-                A = np.matrix(A)
-                b = CyLPArray(b)
+            if self.A is not None:
+                A = np.matrix(self.A)
+                b = CyLPArray(self.b)
             elif numVars <= 2 and GRUMPY_INSTALLED:
                 p = Polyhedron2D(points = points, rays = rays)
                 A = np.matrix(p.hrep.A)
@@ -84,13 +95,12 @@ class MILPInstance:
                 lp += x <= x_u
             except:
                 x_u = None        
-            lp += (A * x <= b if sense[1] == '<=' else
+            lp += (A * x <= b if self.sense == '<=' else
                    A * x >= b)
-            c = CyLPArray(c)
-            lp.objective = -c * x if sense[0] == 'Max' else c * x
+            c = CyLPArray(self.c)
+            if self.sense is not None and mip.sense[0] == 'Max':
+                lp.objective = -c * x
+            else:
+                lp.objective = c * x
             self.lp = lp
             self.x = x
-            self.A = A
-            self.b = b
-            self.sense = sense[1]
-            self.integerIndices = integerIndices
