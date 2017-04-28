@@ -15,7 +15,10 @@ DISPLAY_ENABLED = True
 try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
-    DISPLAY_ENABLED = False
+    try:
+        from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+    except ImportError:
+        DISPLAY_ENABLED = False
 
 sys.path.append('examples')
 
