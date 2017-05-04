@@ -69,9 +69,9 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
                 cuts.append((pi, pi0))
             else:
                 cuts.append((-pi, -pi0))
-    return cuts
+    return cuts, []
             
-def disp_relaxation(A, b, cuts = [], sol = None):
+def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
     #TODO: Check sense of inequalities by looking explicitly at
     #      lp.constraintsUpper and lp.constraintsLower
     p = Polyhedron2D(A = A, b = b)
@@ -85,6 +85,8 @@ def disp_relaxation(A, b, cuts = [], sol = None):
                      label = 'Convex hull of integer points')
     for (coeff, r) in cuts:
         f.add_line(coeff, r, p.xlim, p.ylim, color = 'green', linestyle = 'dashed')
+    for (coeff, r) in disj:
+        f.add_line(coeff, r, p.xlim, p.ylim, color = 'red', linestyle = 'dashed')
     if sol is not None:
         f.add_point(sol, radius = .05)
     f.show()
@@ -134,13 +136,16 @@ def solve(m, whichCuts = [],
             print 'Integer solution found!'
             break
         cuts = []
+        disj = []
         for (cg, args) in whichCuts:
-            cuts += cg(m.lp, m.integerIndices, m.sense, sol, **args)
+            tmp_cuts, tmp_disj = cg(m.lp, m.integerIndices, m.sense, sol, **args)
+            cuts += tmp_cuts
+            disj += tmp_disj
         if cuts == []:
             print 'No cuts found!'
             break
         if display:
-            disp_relaxation(m.A, m.b, cuts, sol)
+            disp_relaxation(m.A, m.b, cuts, sol, disj)
         for (coeff, r) in cuts[:max_cuts]:
             #TODO sort cuts by degree of violation
             if m.sense == '<=':
