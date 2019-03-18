@@ -51,7 +51,7 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
     '''Return the Gomory cut of rows in ``rowInds`` of lp 
     (a CyClpSimplex object)'''
     cuts = []
-    if sol == None:
+    if sol is None:
         sol = lp.primalVariableSolution['x']
     if rowInds is None:
         rowInds = range(lp.nConstraints)
