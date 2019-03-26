@@ -23,6 +23,9 @@ polyhedron2D class of [GrUMPy](https://github.com/coin-or/GrUMPy).
 
 https://tkralphs.github.io/CuPPy
 
-Install with `easy_install coinor.cuppy`
+Install with 
 
+```
+pip install coinor.cuppy`
+```
 
