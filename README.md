@@ -26,6 +26,6 @@ https://tkralphs.github.io/CuPPy
 Install with 
 
 ```
-pip install coinor.cuppy`
+pip install coinor.cuppy
 ```
 
