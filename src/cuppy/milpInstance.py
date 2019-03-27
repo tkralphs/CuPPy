@@ -3,6 +3,8 @@ Created on Apr 26, 2016
 
 @author: TedR
 '''
+from builtins import range
+from builtins import object
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray
 import importlib as ilib
@@ -16,7 +18,7 @@ except ImportError:
     except ImportError:
         GRUMPY_INSTALLED = False
 
-class MILPInstance:
+class MILPInstance(object):
     def __init__(self, module_name = None, file_name = None,
                  A = None, b = None, c = None,
                  points = None, rays = None,
@@ -69,8 +71,7 @@ class MILPInstance:
                     numVars = len(mip.A)
        
             if numVars is None:
-                raise("Must specify number of variables when problem is not"+
-                      "in inequality form")   
+                raise "Must specify number of variables when problem is not"   
                 
             lp = CyClpSimplex()
             if self.A is not None:
@@ -81,8 +82,7 @@ class MILPInstance:
                 A = np.matrix(p.hrep.A)
                 b = np.matrix(p.hrep.b)
             else:
-                raise("Must specify problem in inequality form with more than two variables\n"+
-                      "or when GrUMPy is not installed")   
+                raise "Must specify problem in inequality form with more than two variables\n"   
         
             #Warning: At the moment, you must put bound constraints in explicitly for split cuts
             x_l = CyLPArray([0 for _ in range(numVars)])
