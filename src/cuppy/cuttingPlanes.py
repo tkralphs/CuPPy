@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from past.utils import old_div
 __version__    = '0.5.2'
 __author__     = 'Aykut Bulut and Ted Ralphs'
 __license__    = 'Eclipse Public License'
@@ -19,7 +24,7 @@ try:
     from pyomo.environ import NonNegativeReals, NonPositiveReals, Reals, Set
     from pyomo.environ import Integers, Objective, minimize, value
 except ImportError:
-    print "PYOMO not found"
+    print("PYOMO not found")
     PYOMO_INSTALLED = False
 
 DISPLAY_ENABLED = True
@@ -38,7 +43,7 @@ def isInt(x, epsilon):
     Return True if x is an integer, or if x is a numpy array
     with all integer elements, False otherwise
     '''
-    if isinstance(x, (int, long, float)):
+    if isinstance(x, (int, float)):
         return abs(math.floor(x) - x) < epsilon
     return (np.abs(np.around(x) - x) < epsilon).all()
 
@@ -54,9 +59,9 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
     if sol is None:
         sol = lp.primalVariableSolution['x']
     if rowInds is None:
-        rowInds = range(lp.nConstraints)
+        rowInds = list(range(lp.nConstraints))
     if integerIndices is None:
-        integerIndices = range(lp.nVariables)
+        integerIndices = list(range(lp.nVariables))
     for row in rowInds:
         basicVarInd = lp.basicVariables[row]
         if (basicVarInd in integerIndices) and (not isInt(sol[basicVarInd], epsilon)):
@@ -69,9 +74,9 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
                     f.append(0)
                 else:
                     f.append(getFraction(lp.tableau[row, i]))
-            pi = np.array([f[j]/f0 if f[j] <= f0 
-                           else (1-f[j])/(1-f0) for j in range(lp.nVariables)])
-            pi_slacks = np.array([x/f0 if x > 0 else -x/(1-f0)  
+            pi = np.array([old_div(f[j],f0) if f[j] <= f0 
+                           else old_div((1-f[j]),(1-f0)) for j in range(lp.nVariables)])
+            pi_slacks = np.array([old_div(x,f0) if x > 0 else old_div(-x,(1-f0))  
                                  for x in lp.tableau[row, lp.nVariables:]])
             pi -= pi_slacks * lp.coefMatrix
             pi0 = (1 - np.dot(pi_slacks, lp.constraintsUpper) if sense == '<='
@@ -92,18 +97,18 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
     infinity = lp.getCoinInfinity()
 
     if debug_print:
-        print me, "constraints sense = ", sense
-        print me, "con lower bounds = ", lp.constraintsLower
-        print me, "con upper bounds = ", lp.constraintsUpper
-        print me, "con matrix = ", lp.coefMatrix.toarray()
-        print me, "vars lower bounds = ", lp.variablesLower
-        print me, "vars upper bounds = ", lp.variablesUpper
-        print me, "Assuming objective is to minimize"
-        print me, "objective = ", lp.objective
-        print me, "infinity = ", infinity
-        print me, "current point = ", sol
-        print me, "pi = ", pi
-        print me, "pi0 = ", pi0
+        print(me, "constraints sense = ", sense)
+        print(me, "con lower bounds = ", lp.constraintsLower)
+        print(me, "con upper bounds = ", lp.constraintsUpper)
+        print(me, "con matrix = ", lp.coefMatrix.toarray())
+        print(me, "vars lower bounds = ", lp.variablesLower)
+        print(me, "vars upper bounds = ", lp.variablesUpper)
+        print(me, "Assuming objective is to minimize")
+        print(me, "objective = ", lp.objective)
+        print(me, "infinity = ", infinity)
+        print(me, "current point = ", sol)
+        print(me, "pi = ", pi)
+        print(me, "pi0 = ", pi0)
 
     A = lp.coefMatrix.toarray()
     #c = lp.objective
@@ -193,19 +198,19 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
         u0 = cbcModel.primalVariableSolution['u0'][0]
         v0 = cbcModel.primalVariableSolution['v0'][0]
         if debug_print:
-            print 'Objective Value: ', cbcModel.objectiveValue
-            print 'alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol)
-            print 'beta: ', beta
-            print 'Violation of cut: ',  np.dot(alpha, sol) - beta
+            print('Objective Value: ', cbcModel.objectiveValue)
+            print('alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol))
+            print('beta: ', beta)
+            print('Violation of cut: ',  np.dot(alpha, sol) - beta)
     else: 
         CG = AbstractModel()
-        CG.u = Var(range(A.shape[0]), domain=NonNegativeReals,
+        CG.u = Var(list(range(A.shape[0])), domain=NonNegativeReals,
                    bounds = (0.0, None))
-        CG.v = Var(range(A.shape[0]), domain=NonNegativeReals,
+        CG.v = Var(list(range(A.shape[0])), domain=NonNegativeReals,
                    bounds = (0.0, None))
         CG.u0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
         CG.v0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
-        CG.alpha = Var(range(A.shape[0]), domain=Reals,
+        CG.alpha = Var(list(range(A.shape[0])), domain=Reals,
                        bounds = (None, None))    
         CG.beta  = Var(domain=Reals, bounds = (None, None))    
         
@@ -214,13 +219,13 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
             x = float(pi[i])
             return(sum(Atran[i, j]*CG.u[j] for j in range(A.shape[0])) -
                    x*CG.u0 - CG.alpha[i] == 0.0)
-        CG.pi_rule_left = Constraint(range(A.shape[1]), rule=pi_rule_left)
+        CG.pi_rule_left = Constraint(list(range(A.shape[1])), rule=pi_rule_left)
         
         def pi_rule_right(CG, i):
             x = float(pi[i])
             return(sum(Atran[i, j]*CG.v[j] for j in range(A.shape[0])) +
                    x*CG.v0 - CG.alpha[i] == 0.0)
-        CG.pi_rule_right = Constraint(range(A.shape[1]), rule=pi_rule_right)
+        CG.pi_rule_right = Constraint(list(range(A.shape[1])), rule=pi_rule_right)
         
         def pi0_rule_left(CG):
             return(sum(b[j]*CG.u[j] for j in range(A.shape[0])) -
@@ -256,9 +261,9 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
                           for i in range(lp.nVariables)])
     violation =  beta - np.dot(alpha, sol) 
     if debug_print:
-        print me, 'Beta: ', beta
-        print me, 'alpha: ', alpha
-        print me, 'Violation of cut: ', violation
+        print(me, 'Beta: ', beta)
+        print(me, 'alpha: ', alpha)
+        print(me, 'Violation of cut: ', violation)
         
     if violation > 0.001:
         if (sense == ">="):
@@ -294,7 +299,8 @@ def solve(m, whichCuts = [], use_cglp = False,
           max_iter = 100, max_cuts = 10, display = False):    
 
     if not isinstance(m, MILPInstance):
-        raise "Invalid first parameter: Must be of type MILPInstance"
+        print("Invalid first parameter: Must be of type MILPInstance")
+        exit
 
     if not DISPLAY_ENABLED:
         display = False
@@ -307,10 +313,10 @@ def solve(m, whichCuts = [], use_cglp = False,
         disp_relaxation(m.A, m.b)
     
     disj = []
-    for i in xrange(max_iter):
-        print 'Iteration ', i
+    for i in range(max_iter):
+        print('Iteration ', i)
         m.lp.primal(startFinishOptions = 'x')
-        print 'Current bound:', m.lp.objectiveValue
+        print('Current bound:', m.lp.objectiveValue)
         #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
         #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
         #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
@@ -321,17 +327,17 @@ def solve(m, whichCuts = [], use_cglp = False,
             rhs = np.dot(m.lp.basisInverse, m.lp.constraintsLower)
         sol = m.lp.primalVariableSolution['x']
         if debug_print:
-            print 'Current basis inverse:'
-            print m.lp.basisInverse
-            print 'Condition number of basis inverse'
-            print np.linalg.cond(m.lp.basisInverse)
-            print "Current tableaux:"
-            print m.lp.tableau
-            print "Current right hand side:\n", rhs
+            print('Current basis inverse:')
+            print(m.lp.basisInverse)
+            print('Condition number of basis inverse')
+            print(np.linalg.cond(m.lp.basisInverse))
+            print("Current tableaux:")
+            print(m.lp.tableau)
+            print("Current right hand side:\n", rhs)
             #print lp.rhs
-        print 'Current solution: ', sol
+        print('Current solution: ', sol)
         if isInt(sol[m.integerIndices], epsilon):
-            print 'Integer solution found!'
+            print('Integer solution found!')
             break
         cuts = []
         if disj == []:
@@ -345,10 +351,10 @@ def solve(m, whichCuts = [], use_cglp = False,
                 cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense)
         if cuts == []:
             if disj == []:
-                print 'No cuts found and terminating!'
+                print('No cuts found and terminating!')
                 break
             else:
-                print 'No cuts found but continuing!'
+                print('No cuts found but continuing!')
         if display:
             disp_relaxation(m.A, m.b, cuts, sol, disj)
         if len(cuts) == cur_num_cuts:
@@ -356,10 +362,10 @@ def solve(m, whichCuts = [], use_cglp = False,
         for (coeff, r) in cuts[:max_cuts]:
             #TODO sort cuts by degree of violation
             if m.sense == '<=':
-                print 'Adding cut: ', coeff, '<=', r
+                print('Adding cut: ', coeff, '<=', r)
                 m.lp += CyLPArray(coeff) * m.x <= r
             else:
-                print 'Adding cut: ', coeff, '>=', r
+                print('Adding cut: ', coeff, '>=', r)
                 m.lp += CyLPArray(coeff) * m.x >= r
             if display:
                 m.A.append(coeff.tolist())

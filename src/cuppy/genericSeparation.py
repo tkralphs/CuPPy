@@ -39,6 +39,11 @@ InvCollection:
                      it the to InvProb
         solve():     uses other methods iteratively to solve the InvProb
 '''
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from builtins import object
 
 __version__    = '0.5.2'
 __author__     = 'Aykut Bulut and Ted Ralphs'
@@ -55,7 +60,7 @@ try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
 except ImportError:
     from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
-from milpInstance import MILPInstance
+from .milpInstance import MILPInstance
 import sys
 sys.path.append('examples')
 
@@ -65,7 +70,7 @@ class GenericSeparation(object):
 
     def __init__(self, origProb, x0, pi_init = None):
         if pi_init == None:
-            pi_init = [(v.name, 0) for v in self.var.values()]
+            pi_init = [(v.name, 0) for v in list(self.var.values())]
         self.prob = origProb
         self.iter = 1
         self.x0 = x0
@@ -73,15 +78,15 @@ class GenericSeparation(object):
         self.dim = len(self.var)
         self.currentXtremePoint = {}
         self.solver = None
-        self.c = dict(list((v.name,c) for v,c in origProb.objective.iteritems()))
+        self.c = dict(list((v.name,c) for v,c in origProb.objective.items()))
         for v in self.var:
             if v in self.c:
                 continue
             else:
                 self.c[v] = 0.0
         self.generate_separation_problem()
-        self.piCurrent = dict([(v.name, pi_init[v.name]) for v in self.var.values()]) 
-        self.piPrevious = dict([(v.name, 0) for v in self.var.values()]) 
+        self.piCurrent = dict([(v.name, pi_init[v.name]) for v in list(self.var.values())]) 
+        self.piPrevious = dict([(v.name, 0) for v in list(self.var.values())]) 
         self.extremePoints = []
         self.f = Figure()
         
@@ -102,11 +107,11 @@ class GenericSeparation(object):
         for v in self.var:
             self.currentXtremePoint[v] = self.var[v].value()
         if self.output == 1:
-            currentXtremePointList = self.currentXtremePoint.items()
+            currentXtremePointList = list(self.currentXtremePoint.items())
             currentXtremePointList.sort()
             for v in currentXtremePointList:
-                print v[0]+'\t', v[1]
-        self.extremePoints.append(self.currentXtremePoint.values())
+                print(v[0]+'\t', v[1])
+        self.extremePoints.append(list(self.currentXtremePoint.values()))
         return self.prob.objective.value()
 
     def add_inequality(self):
@@ -116,17 +121,17 @@ class GenericSeparation(object):
     def separate(self, output = False, p = None):
         self.output = output
         while True:
-            print 'Iteration ', self.iter
+            print('Iteration ', self.iter)
             if self.generate_xtreme_point() >= 1-EPS:
                 break
             self.add_inequality()
             if self.output:
-                print "Separation problem solution status:", LpStatus[self.sepProb.solve()]
+                print("Separation problem solution status:", LpStatus[self.sepProb.solve()])
                 for v in self.var:
                     if self.pi[v].value() is not None:
-                        print self.pi[v].name+'\t\t', self.pi[v].value()
+                        print(self.pi[v].name+'\t\t', self.pi[v].value())
                     else:
-                        print self.pi[v].name+'\t\t', 0
+                        print(self.pi[v].name+'\t\t', 0)
             self.piPrevious = deepcopy(self.piCurrent)
             for v in self.var:
                 if self.pi[v].value() is not None:
@@ -137,7 +142,7 @@ class GenericSeparation(object):
             if p is not None:
                 self.f.initialize()
                 self.f.add_polyhedron(p, label = 'Polyhedron P')
-                xList = (self.x0.values()[0], self.x0.values()[1])
+                xList = (list(self.x0.values())[0], list(self.x0.values())[1])
                 if len(self.extremePoints) > 2:
                     pp = Polyhedron2D(points = self.extremePoints)
                     self.f.add_polyhedron(pp, color = 'red', linestyle = 'dashed',
@@ -157,13 +162,13 @@ class GenericSeparation(object):
                 self.f.set_ylim(p.ylim)
                 self.f.add_point(xList, radius = 0.05, color = 'red')
                 self.f.add_text([xList[0]-0.5, xList[1]-0.08], '$x^*$')
-                dList = (self.piCurrent.values()[0], self.piCurrent.values()[1])
+                dList = (list(self.piCurrent.values())[0], list(self.piCurrent.values())[1])
                 self.f.add_line(dList, 1, 
                                 p.xlim, p.ylim, color = 'green', 
                                 linestyle = 'dashed', label = 'Separating Hyperplane')
                 self.f.show()
             if self.output:
-                print self.sepProb.objective.value()            
+                print(self.sepProb.objective.value())            
 
 def read_instance(module_name):
     '''
@@ -206,6 +211,6 @@ if __name__ == '__main__':
     i = 0
     ic = GenericSeparation(prob, x0, {'x_0': -1, 'x_1' : 0})
     ic.separate(output = True, p = p)
-    print 'separation problem objective value', ic.sepProb.objective.value()
+    print('separation problem objective value', ic.sepProb.objective.value())
 
 
