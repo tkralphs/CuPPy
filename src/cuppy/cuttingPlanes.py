@@ -17,7 +17,7 @@ from copy import deepcopy
 from cylp.py.utils.sparseUtil import csc_matrixPlus 
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
-from milpInstance import MILPInstance
+from .milpInstance import MILPInstance
 PYOMO_INSTALLED = True
 try:
     from pyomo.environ import AbstractModel, Var, Constraint, SolverFactory

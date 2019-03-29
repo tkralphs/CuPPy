@@ -1,4 +1,4 @@
 from __future__ import absolute_import
-import cuttingPlanes
-import genericSeparation
-import milpInstance
+from . import cuttingPlanes
+from . import genericSeparation
+from . import milpInstance
