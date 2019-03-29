@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.5.3" />
-<title>coinor.cuppy API documentation</title>
+<title>coinor.cuppy.examples.MIP6 API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,44 +17,116 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title"><code>coinor.cuppy</code> module</h1>
+<h1 class="title"><code>coinor.cuppy.examples.MIP6</code> module</h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">from __future__ import absolute_import
-from . import cuttingPlanes
-from . import genericSeparation
-from . import milpInstance</code></pre>
+<pre><code class="python">numVars = 2
+numCons = 6
+A = [[ -8,     30],
+     [ -2,    -4],
+     [-14,     8],
+     [  2,   -36],
+     [  30, -8],
+     [  10,     10],
+#     [  1,    -8],
+     ]
+b = [115,
+     -5,
+      1,
+     -5,
+     191,
+     127,
+#     2
+    ]
+sense = (&#39;Max&#39;, &#39;&lt;=&#39;)
+integerIndices = [0, 1]
+#Variations
+#points = [[2.5, 4.5], [6.5, 0.5], [0.5, 1],
+#          [7, 5.7], [7.7, 5], [2, 0.25]]
+#points = [[0, 0], [2.5, 4.5], [7.75, 5.75], [6.5, 0.5]]
+#points = [[0, 0], [2.5, 4.5], [7.5, 5.5], [6.5, 0.5]]
+
+#This is the integer hull
+#A = [[ 0, -1],
+# [-1, 1],
+# [-2,  1],
+# [-1,  2],
+# [ 2, -1],
+# [ 0,  1],
+# [ 1, 0],
+# ]
+
+#b = [ -1,   
+#   1,  
+#  -1,   
+#   5,  
+#  11,   
+#   5,   
+#   7]
+
+c = [-1, 1]
+#c = [1, -1]
+obj_val = 2 
+
+#Rank 1 inequalities
+cuts = [
+     [-1.26, 2.72], 
+#    pypolyhedron doesn&#39;t like the full-recision version 
+#     [-1.25842697, 2.71910112], 
+     [-2.71910112,  2.69662921],
+     [ 2.06015038, -1.08270677], 
+     [1, 0],
+     [0, 1],
+     [-1, 0],
+     [0, -1],
+     ]
+rhs = [
+     8.08,
+#    pypolyhedron doesn&#39;t like the full-recision version 
+#     8.08988764045,
+     4.33707865169,
+#     -0.563909774436,
+     11.8496240602,
+     7,
+     5,
+     -1,
+     -1,
+    ]
+
+# This is to simulate branching
+obj_val1 = 1.63
+A1 = A + [[1, 0]]
+b1 = b + [2]
+
+A2 = A + [[-1, 0]]
+b2 = b + [-3]
+
+obj_val2 = 1
+A3 = A2 + [[0, -1]]
+b3 = b2 + [-5]
+
+A4 = A2 + [[0, 1]]
+b4 = b2 + [4]
+
+if __name__ == &#39;__main__&#39;:
+
+    try:
+        from coinor.cuppy.cuttingPlanes import solve, gomoryCut
+        from coinor.cuppy.milpInstance import MILPInstance
+    except ImportError:
+        from src.cuppy.cuttingPlanes import solve, gomoryCut
+        from src.cuppy.milpInstance import MILPInstance
+
+    m = MILPInstance(A = A, b = b, c = c,
+                     sense = sense, integerIndices = integerIndices,
+                     numVars = numVars)
+    
+    solve(m, whichCuts = [(gomoryCut, {})], display = True, debug_print = True)</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="coinor.cuppy.cuttingPlanes" href="cuttingPlanes.html">coinor.cuppy.cuttingPlanes</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.examples" href="examples/index.html">coinor.cuppy.examples</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.genericSeparation" href="genericSeparation.html">coinor.cuppy.genericSeparation</a></code></dt>
-<dd>
-<section class="desc"><h2 id="invcollection">InvCollection</h2>
-<p>attributes:
-prob:
-Original problem
-type: LpProblem
-iter:
-Iteration number
-…</p></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.milpInstance" href="milpInstance.html">coinor.cuppy.milpInstance</a></code></dt>
-<dd>
-<section class="desc"><p>Created on Apr 26, 2016 …</p></section>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -69,12 +141,9 @@ Iteration number
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="coinor.cuppy.cuttingPlanes" href="cuttingPlanes.html">coinor.cuppy.cuttingPlanes</a></code></li>
-<li><code><a title="coinor.cuppy.examples" href="examples/index.html">coinor.cuppy.examples</a></code></li>
-<li><code><a title="coinor.cuppy.genericSeparation" href="genericSeparation.html">coinor.cuppy.genericSeparation</a></code></li>
-<li><code><a title="coinor.cuppy.milpInstance" href="milpInstance.html">coinor.cuppy.milpInstance</a></code></li>
+<li><code><a title="coinor.cuppy.examples" href="index.html">coinor.cuppy.examples</a></code></li>
 </ul>
 </li>
 </ul>

@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.3" />
+<title>coinor.cuppy.genericSeparation API documentation</title>
+<meta name="description" content="InvCollection:
+attributes:
+prob:
+Original problem
+type: LpProblem
+iter:
+Iteration number
+…" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>coinor.cuppy.genericSeparation</code> module</h1>
+</header>
+<section id="section-intro">
+<h2 id="invcollection">InvCollection</h2>
+<p>attributes:
+prob:
+Original problem
+type: LpProblem
+iter:
+Iteration number
+type: int
+x0:
+point given
+type: dict
+var:
+dictionary of the variables of prob
+type: dictionary
+dim:
+dimension of the problem
+type: int
+c:
+objective function coefficients of the prob
+type: dict
+invProb:
+inverse of the prob
+type: LpProblem
+currentXtremePoint:
+current extreme point generated
+type: dict
+dCurrent:
+InvProblem variable d in current iteration
+type: dict
+dPrevious:
+InvProblem variable d in previous iteration
+type: dict
+methods:
+<strong>init</strong>(self,prob,x0):
+creates invProb, and sets some attributes, prob and x0
+are as described above
+generate_inverse():
+generates invProb from prob and point x0
+generate_xtreme_point():
+generates extreme point for the current setting
+add_inequality():
+creates inequality from current extreme point and adds
+it the to InvProb
+solve():
+uses other methods iteratively to solve the InvProb</p>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python"># inverse2.py This file contains classes to solve inverse optimization problems 
+# it only utilizes pulp, no dippy
+# -----------------------------------------------------------------------------
+
+&#39;&#39;&#39;
+InvCollection:
+    attributes:
+        prob:        Original problem
+                     type: LpProblem
+        iter:        Iteration number
+                     type: int
+        x0:          point given
+                     type: dict
+        var:         dictionary of the variables of prob
+                     type: dictionary
+        dim:         dimension of the problem
+                     type: int
+        c:           objective function coefficients of the prob
+                     type: dict
+        invProb:     inverse of the prob
+                     type: LpProblem
+        currentXtremePoint:
+                     current extreme point generated
+                     type: dict
+        dCurrent:    InvProblem variable d in current iteration
+                     type: dict
+        dPrevious:   InvProblem variable d in previous iteration
+                     type: dict
+    methods:
+        __init__(self,prob,x0):
+                     creates invProb, and sets some attributes, prob and x0
+                     are as described above
+        generate_inverse():
+                     generates invProb from prob and point x0
+        generate_xtreme_point():
+                     generates extreme point for the current setting
+        add_inequality():
+                     creates inequality from current extreme point and adds
+                     it the to InvProb
+        solve():     uses other methods iteratively to solve the InvProb
+&#39;&#39;&#39;
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import str
+from builtins import range
+from builtins import object
+
+__version__    = &#39;0.5.2&#39;
+__author__     = &#39;Aykut Bulut and Ted Ralphs&#39;
+__license__    = &#39;Eclipse Public License&#39;
+__maintainer__ = &#39;Ted Ralphs&#39;
+__email__      = &#39;ted@lehigh.edu&#39;
+__url__        = &#39;https://github.com/tkralphs/CuPPy&#39;
+
+import importlib as ilib
+from copy import deepcopy
+from pulp import LpProblem, LpVariable, LpMinimize, LpInteger
+from pulp import LpContinuous, lpSum, LpConstraintVar, LpStatus
+try:
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+except ImportError:
+    from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+from .milpInstance import MILPInstance
+import sys
+sys.path.append(&#39;examples&#39;)
+
+
+EPS = 1e-6
+class GenericSeparation(object):
+
+    def __init__(self, origProb, x0, pi_init = None):
+        if pi_init == None:
+            pi_init = [(v.name, 0) for v in list(self.var.values())]
+        self.prob = origProb
+        self.iter = 1
+        self.x0 = x0
+        self.var = origProb.variablesDict()
+        self.dim = len(self.var)
+        self.currentXtremePoint = {}
+        self.solver = None
+        self.c = dict(list((v.name,c) for v,c in origProb.objective.items()))
+        for v in self.var:
+            if v in self.c:
+                continue
+            else:
+                self.c[v] = 0.0
+        self.generate_separation_problem()
+        self.piCurrent = dict([(v.name, pi_init[v.name]) for v in list(self.var.values())]) 
+        self.piPrevious = dict([(v.name, 0) for v in list(self.var.values())]) 
+        self.extremePoints = []
+        self.f = Figure()
+        
+    def generate_separation_problem(self):
+        self.sepProb = LpProblem (name=&#39;separation &#39;+self.prob.name, sense=LpMinimize)
+        self.pi = dict(list((v,LpVariable(&#39;pi&#39;+v, None, None, LpContinuous,
+                                         None))
+                                         for v in self.var)) 
+        self.sepProb += lpSum(self.pi[v]*self.x0[v] for v in self.var)
+
+    def generate_xtreme_point(self):
+        obj = LpConstraintVar()
+        for v in self.prob.variables():
+            obj.addVariable(v, self.piCurrent[v.name])
+        self.prob.setObjective(obj)
+        self.prob.solve()
+        #solvers.COIN_CMD.solve(self.prob)
+        for v in self.var:
+            self.currentXtremePoint[v] = self.var[v].value()
+        if self.output == 1:
+            currentXtremePointList = list(self.currentXtremePoint.items())
+            currentXtremePointList.sort()
+            for v in currentXtremePointList:
+                print(v[0]+&#39;\t&#39;, v[1])
+        self.extremePoints.append(list(self.currentXtremePoint.values()))
+        return self.prob.objective.value()
+
+    def add_inequality(self):
+        # change this, you should not access sense directly call a method
+        self.sepProb += lpSum (self.currentXtremePoint[v]*self.pi[v] for v in self.var) &gt;= 1
+
+    def separate(self, output = False, p = None):
+        self.output = output
+        while True:
+            print(&#39;Iteration &#39;, self.iter)
+            if self.generate_xtreme_point() &gt;= 1-EPS:
+                break
+            self.add_inequality()
+            if self.output:
+                print(&#34;Separation problem solution status:&#34;, LpStatus[self.sepProb.solve()])
+                for v in self.var:
+                    if self.pi[v].value() is not None:
+                        print(self.pi[v].name+&#39;\t\t&#39;, self.pi[v].value())
+                    else:
+                        print(self.pi[v].name+&#39;\t\t&#39;, 0)
+            self.piPrevious = deepcopy(self.piCurrent)
+            for v in self.var:
+                if self.pi[v].value() is not None:
+                    self.piCurrent[v] = self.pi[v].value()
+                else:
+                    self.piCurrent[v] = 0
+            self.iter += 1
+            if p is not None:
+                self.f.initialize()
+                self.f.add_polyhedron(p, label = &#39;Polyhedron P&#39;)
+                xList = (list(self.x0.values())[0], list(self.x0.values())[1])
+                if len(self.extremePoints) &gt; 2:
+                    pp = Polyhedron2D(points = self.extremePoints)
+                    self.f.add_polyhedron(pp, color = &#39;red&#39;, linestyle = &#39;dashed&#39;,
+                                          label = &#39;Convex Hull of Generated Points&#39;)
+                elif len(self.extremePoints) == 1:
+                    self.f.add_point(self.extremePoints[0], radius = 0.05, 
+                                     color = &#39;green&#39;)
+                    self.f.add_text([self.extremePoints[0][0]-0.5, 
+                                    self.extremePoints[0][1]-0.08], &#39;$x^0$&#39;)
+                else:
+                    self.f.add_line_segment(self.extremePoints[0], 
+                                            self.extremePoints[1], 
+                                            color = &#39;red&#39;,
+                                            linestyle = &#39;dashed&#39;,
+                                            label = &#39;Convex Hull of Generated Points&#39;)
+                self.f.set_xlim(p.xlim)
+                self.f.set_ylim(p.ylim)
+                self.f.add_point(xList, radius = 0.05, color = &#39;red&#39;)
+                self.f.add_text([xList[0]-0.5, xList[1]-0.08], &#39;$x^*$&#39;)
+                dList = (list(self.piCurrent.values())[0], list(self.piCurrent.values())[1])
+                self.f.add_line(dList, 1, 
+                                p.xlim, p.ylim, color = &#39;green&#39;, 
+                                linestyle = &#39;dashed&#39;, label = &#39;Separating Hyperplane&#39;)
+                self.f.show()
+            if self.output:
+                print(self.sepProb.objective.value())            
+
+def read_instance(module_name):
+    &#39;&#39;&#39;
+    creates problem defined in the documentation of this file
+    &#39;&#39;&#39; 
+    mip = ilib.import_module(module_name)
+            
+    # create LpProblem instance
+    prob = LpProblem(&#34;MIP&#34;, LpMinimize)
+    # create variables
+    x = []
+    for i in range(len(mip.A[0])):
+        x.append(LpVariable(&#39;x_&#39;+str(i), 0, None, LpInteger))
+    # add obj function
+    prob +=  lpSum(mip.c[i]*x[i] for i in range(len(mip.A[0])))
+    # add constraints to the prob
+    for i in range(len(mip.A)):
+        prob +=  mip.A[i][0]*x[0] + mip.A[i][1]*x[1] &lt;= mip.b[i]
+    return prob, x, mip
+
+if __name__ == &#39;__main__&#39;:
+    
+    display = True
+    prob, vars, mip = read_instance(module_name = &#39;MIP8&#39;)
+
+    if display:
+        p = Polyhedron2D(A = mip.A, b = mip.b)
+        f = Figure()
+        f.add_polyhedron(p, show_int_points = True, label = &#39;Polyhedron P&#39;)
+        f.set_xlim(p.xlim)
+        f.set_ylim(p.ylim)
+        f.add_point(mip.x_sep, radius = 0.05, color = &#39;red&#39;)
+        f.add_text([mip.x_sep[0]-0.5, mip.x_sep[1]-0.08], &#39;$x^*$&#39;)
+        f.show()
+
+    # This is the point to be separated 
+    x0 = {}
+    for index, value in enumerate(mip.x_sep):
+        x0[vars[index].name] = value
+    i = 0
+    ic = GenericSeparation(prob, x0, {&#39;x_0&#39;: -1, &#39;x_1&#39; : 0})
+    ic.separate(output = True, p = p)
+    print(&#39;separation problem objective value&#39;, ic.sepProb.objective.value())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="coinor.cuppy.genericSeparation.read_instance"><code class="name flex">
+<span>def <span class="ident">read_instance</span></span>(<span>module_name)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>creates problem defined in the documentation of this file</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def read_instance(module_name):
+    &#39;&#39;&#39;
+    creates problem defined in the documentation of this file
+    &#39;&#39;&#39; 
+    mip = ilib.import_module(module_name)
+            
+    # create LpProblem instance
+    prob = LpProblem(&#34;MIP&#34;, LpMinimize)
+    # create variables
+    x = []
+    for i in range(len(mip.A[0])):
+        x.append(LpVariable(&#39;x_&#39;+str(i), 0, None, LpInteger))
+    # add obj function
+    prob +=  lpSum(mip.c[i]*x[i] for i in range(len(mip.A[0])))
+    # add constraints to the prob
+    for i in range(len(mip.A)):
+        prob +=  mip.A[i][0]*x[0] + mip.A[i][1]*x[1] &lt;= mip.b[i]
+    return prob, x, mip</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation"><code class="flex name class">
+<span>class <span class="ident">GenericSeparation</span></span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">class GenericSeparation(object):
+
+    def __init__(self, origProb, x0, pi_init = None):
+        if pi_init == None:
+            pi_init = [(v.name, 0) for v in list(self.var.values())]
+        self.prob = origProb
+        self.iter = 1
+        self.x0 = x0
+        self.var = origProb.variablesDict()
+        self.dim = len(self.var)
+        self.currentXtremePoint = {}
+        self.solver = None
+        self.c = dict(list((v.name,c) for v,c in origProb.objective.items()))
+        for v in self.var:
+            if v in self.c:
+                continue
+            else:
+                self.c[v] = 0.0
+        self.generate_separation_problem()
+        self.piCurrent = dict([(v.name, pi_init[v.name]) for v in list(self.var.values())]) 
+        self.piPrevious = dict([(v.name, 0) for v in list(self.var.values())]) 
+        self.extremePoints = []
+        self.f = Figure()
+        
+    def generate_separation_problem(self):
+        self.sepProb = LpProblem (name=&#39;separation &#39;+self.prob.name, sense=LpMinimize)
+        self.pi = dict(list((v,LpVariable(&#39;pi&#39;+v, None, None, LpContinuous,
+                                         None))
+                                         for v in self.var)) 
+        self.sepProb += lpSum(self.pi[v]*self.x0[v] for v in self.var)
+
+    def generate_xtreme_point(self):
+        obj = LpConstraintVar()
+        for v in self.prob.variables():
+            obj.addVariable(v, self.piCurrent[v.name])
+        self.prob.setObjective(obj)
+        self.prob.solve()
+        #solvers.COIN_CMD.solve(self.prob)
+        for v in self.var:
+            self.currentXtremePoint[v] = self.var[v].value()
+        if self.output == 1:
+            currentXtremePointList = list(self.currentXtremePoint.items())
+            currentXtremePointList.sort()
+            for v in currentXtremePointList:
+                print(v[0]+&#39;\t&#39;, v[1])
+        self.extremePoints.append(list(self.currentXtremePoint.values()))
+        return self.prob.objective.value()
+
+    def add_inequality(self):
+        # change this, you should not access sense directly call a method
+        self.sepProb += lpSum (self.currentXtremePoint[v]*self.pi[v] for v in self.var) &gt;= 1
+
+    def separate(self, output = False, p = None):
+        self.output = output
+        while True:
+            print(&#39;Iteration &#39;, self.iter)
+            if self.generate_xtreme_point() &gt;= 1-EPS:
+                break
+            self.add_inequality()
+            if self.output:
+                print(&#34;Separation problem solution status:&#34;, LpStatus[self.sepProb.solve()])
+                for v in self.var:
+                    if self.pi[v].value() is not None:
+                        print(self.pi[v].name+&#39;\t\t&#39;, self.pi[v].value())
+                    else:
+                        print(self.pi[v].name+&#39;\t\t&#39;, 0)
+            self.piPrevious = deepcopy(self.piCurrent)
+            for v in self.var:
+                if self.pi[v].value() is not None:
+                    self.piCurrent[v] = self.pi[v].value()
+                else:
+                    self.piCurrent[v] = 0
+            self.iter += 1
+            if p is not None:
+                self.f.initialize()
+                self.f.add_polyhedron(p, label = &#39;Polyhedron P&#39;)
+                xList = (list(self.x0.values())[0], list(self.x0.values())[1])
+                if len(self.extremePoints) &gt; 2:
+                    pp = Polyhedron2D(points = self.extremePoints)
+                    self.f.add_polyhedron(pp, color = &#39;red&#39;, linestyle = &#39;dashed&#39;,
+                                          label = &#39;Convex Hull of Generated Points&#39;)
+                elif len(self.extremePoints) == 1:
+                    self.f.add_point(self.extremePoints[0], radius = 0.05, 
+                                     color = &#39;green&#39;)
+                    self.f.add_text([self.extremePoints[0][0]-0.5, 
+                                    self.extremePoints[0][1]-0.08], &#39;$x^0$&#39;)
+                else:
+                    self.f.add_line_segment(self.extremePoints[0], 
+                                            self.extremePoints[1], 
+                                            color = &#39;red&#39;,
+                                            linestyle = &#39;dashed&#39;,
+                                            label = &#39;Convex Hull of Generated Points&#39;)
+                self.f.set_xlim(p.xlim)
+                self.f.set_ylim(p.ylim)
+                self.f.add_point(xList, radius = 0.05, color = &#39;red&#39;)
+                self.f.add_text([xList[0]-0.5, xList[1]-0.08], &#39;$x^*$&#39;)
+                dList = (list(self.piCurrent.values())[0], list(self.piCurrent.values())[1])
+                self.f.add_line(dList, 1, 
+                                p.xlim, p.ylim, color = &#39;green&#39;, 
+                                linestyle = &#39;dashed&#39;, label = &#39;Separating Hyperplane&#39;)
+                self.f.show()
+            if self.output:
+                print(self.sepProb.objective.value())            </code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation.__init__"><code class="name flex">
+<span>def <span class="ident">__init__</span></span>(<span>self, origProb, x0, pi_init=None)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Initialize self.
+See help(type(self)) for accurate signature.</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def __init__(self, origProb, x0, pi_init = None):
+    if pi_init == None:
+        pi_init = [(v.name, 0) for v in list(self.var.values())]
+    self.prob = origProb
+    self.iter = 1
+    self.x0 = x0
+    self.var = origProb.variablesDict()
+    self.dim = len(self.var)
+    self.currentXtremePoint = {}
+    self.solver = None
+    self.c = dict(list((v.name,c) for v,c in origProb.objective.items()))
+    for v in self.var:
+        if v in self.c:
+            continue
+        else:
+            self.c[v] = 0.0
+    self.generate_separation_problem()
+    self.piCurrent = dict([(v.name, pi_init[v.name]) for v in list(self.var.values())]) 
+    self.piPrevious = dict([(v.name, 0) for v in list(self.var.values())]) 
+    self.extremePoints = []
+    self.f = Figure()</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation.add_inequality"><code class="name flex">
+<span>def <span class="ident">add_inequality</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def add_inequality(self):
+    # change this, you should not access sense directly call a method
+    self.sepProb += lpSum (self.currentXtremePoint[v]*self.pi[v] for v in self.var) &gt;= 1</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation.generate_separation_problem"><code class="name flex">
+<span>def <span class="ident">generate_separation_problem</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def generate_separation_problem(self):
+    self.sepProb = LpProblem (name=&#39;separation &#39;+self.prob.name, sense=LpMinimize)
+    self.pi = dict(list((v,LpVariable(&#39;pi&#39;+v, None, None, LpContinuous,
+                                     None))
+                                     for v in self.var)) 
+    self.sepProb += lpSum(self.pi[v]*self.x0[v] for v in self.var)</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation.generate_xtreme_point"><code class="name flex">
+<span>def <span class="ident">generate_xtreme_point</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def generate_xtreme_point(self):
+    obj = LpConstraintVar()
+    for v in self.prob.variables():
+        obj.addVariable(v, self.piCurrent[v.name])
+    self.prob.setObjective(obj)
+    self.prob.solve()
+    #solvers.COIN_CMD.solve(self.prob)
+    for v in self.var:
+        self.currentXtremePoint[v] = self.var[v].value()
+    if self.output == 1:
+        currentXtremePointList = list(self.currentXtremePoint.items())
+        currentXtremePointList.sort()
+        for v in currentXtremePointList:
+            print(v[0]+&#39;\t&#39;, v[1])
+    self.extremePoints.append(list(self.currentXtremePoint.values()))
+    return self.prob.objective.value()</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.genericSeparation.GenericSeparation.separate"><code class="name flex">
+<span>def <span class="ident">separate</span></span>(<span>self, output=False, p=None)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def separate(self, output = False, p = None):
+    self.output = output
+    while True:
+        print(&#39;Iteration &#39;, self.iter)
+        if self.generate_xtreme_point() &gt;= 1-EPS:
+            break
+        self.add_inequality()
+        if self.output:
+            print(&#34;Separation problem solution status:&#34;, LpStatus[self.sepProb.solve()])
+            for v in self.var:
+                if self.pi[v].value() is not None:
+                    print(self.pi[v].name+&#39;\t\t&#39;, self.pi[v].value())
+                else:
+                    print(self.pi[v].name+&#39;\t\t&#39;, 0)
+        self.piPrevious = deepcopy(self.piCurrent)
+        for v in self.var:
+            if self.pi[v].value() is not None:
+                self.piCurrent[v] = self.pi[v].value()
+            else:
+                self.piCurrent[v] = 0
+        self.iter += 1
+        if p is not None:
+            self.f.initialize()
+            self.f.add_polyhedron(p, label = &#39;Polyhedron P&#39;)
+            xList = (list(self.x0.values())[0], list(self.x0.values())[1])
+            if len(self.extremePoints) &gt; 2:
+                pp = Polyhedron2D(points = self.extremePoints)
+                self.f.add_polyhedron(pp, color = &#39;red&#39;, linestyle = &#39;dashed&#39;,
+                                      label = &#39;Convex Hull of Generated Points&#39;)
+            elif len(self.extremePoints) == 1:
+                self.f.add_point(self.extremePoints[0], radius = 0.05, 
+                                 color = &#39;green&#39;)
+                self.f.add_text([self.extremePoints[0][0]-0.5, 
+                                self.extremePoints[0][1]-0.08], &#39;$x^0$&#39;)
+            else:
+                self.f.add_line_segment(self.extremePoints[0], 
+                                        self.extremePoints[1], 
+                                        color = &#39;red&#39;,
+                                        linestyle = &#39;dashed&#39;,
+                                        label = &#39;Convex Hull of Generated Points&#39;)
+            self.f.set_xlim(p.xlim)
+            self.f.set_ylim(p.ylim)
+            self.f.add_point(xList, radius = 0.05, color = &#39;red&#39;)
+            self.f.add_text([xList[0]-0.5, xList[1]-0.08], &#39;$x^*$&#39;)
+            dList = (list(self.piCurrent.values())[0], list(self.piCurrent.values())[1])
+            self.f.add_line(dList, 1, 
+                            p.xlim, p.ylim, color = &#39;green&#39;, 
+                            linestyle = &#39;dashed&#39;, label = &#39;Separating Hyperplane&#39;)
+            self.f.show()
+        if self.output:
+            print(self.sepProb.objective.value())            </code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="coinor.cuppy" href="index.html">coinor.cuppy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="coinor.cuppy.genericSeparation.read_instance" href="#coinor.cuppy.genericSeparation.read_instance">read_instance</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="coinor.cuppy.genericSeparation.GenericSeparation" href="#coinor.cuppy.genericSeparation.GenericSeparation">GenericSeparation</a></code></h4>
+<ul class="">
+<li><code><a title="coinor.cuppy.genericSeparation.GenericSeparation.__init__" href="#coinor.cuppy.genericSeparation.GenericSeparation.__init__">__init__</a></code></li>
+<li><code><a title="coinor.cuppy.genericSeparation.GenericSeparation.add_inequality" href="#coinor.cuppy.genericSeparation.GenericSeparation.add_inequality">add_inequality</a></code></li>
+<li><code><a title="coinor.cuppy.genericSeparation.GenericSeparation.generate_separation_problem" href="#coinor.cuppy.genericSeparation.GenericSeparation.generate_separation_problem">generate_separation_problem</a></code></li>
+<li><code><a title="coinor.cuppy.genericSeparation.GenericSeparation.generate_xtreme_point" href="#coinor.cuppy.genericSeparation.GenericSeparation.generate_xtreme_point">generate_xtreme_point</a></code></li>
+<li><code><a title="coinor.cuppy.genericSeparation.GenericSeparation.separate" href="#coinor.cuppy.genericSeparation.GenericSeparation.separate">separate</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.5.3" />
+<title>coinor.cuppy.cuttingPlanes API documentation</title>
+<meta name="description" content="" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase;cursor:pointer}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title"><code>coinor.cuppy.cuttingPlanes</code> module</h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from past.utils import old_div
+__version__    = &#39;0.5.2&#39;
+__author__     = &#39;Aykut Bulut and Ted Ralphs&#39;
+__license__    = &#39;Eclipse Public License&#39;
+__maintainer__ = &#39;Ted Ralphs&#39;
+__email__      = &#39;ted@lehigh.edu&#39;
+__url__        = &#39;https://github.com/tkralphs/CuPPy&#39;
+
+import sys
+import math
+import numpy as np
+from copy import deepcopy
+from cylp.py.utils.sparseUtil import csc_matrixPlus 
+from cylp.cy import CyClpSimplex
+from cylp.py.modeling import CyLPArray, CyLPModel
+from .milpInstance import MILPInstance
+PYOMO_INSTALLED = True
+try:
+    from pyomo.environ import AbstractModel, Var, Constraint, SolverFactory
+    from pyomo.environ import NonNegativeReals, NonPositiveReals, Reals, Set
+    from pyomo.environ import Integers, Objective, minimize, value
+except ImportError:
+    print(&#34;PYOMO not found&#34;)
+    PYOMO_INSTALLED = False
+
+DISPLAY_ENABLED = True
+try:
+    from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+except ImportError:
+    try:
+        from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+    except ImportError:
+        DISPLAY_ENABLED = False
+
+sys.path.append(&#39;examples&#39;)
+
+def isInt(x, epsilon):
+    &#39;&#39;&#39;
+    Return True if x is an integer, or if x is a numpy array
+    with all integer elements, False otherwise
+    &#39;&#39;&#39;
+    if isinstance(x, (int, float)):
+        return abs(math.floor(x) - x) &lt; epsilon
+    return (np.abs(np.around(x) - x) &lt; epsilon).all()
+
+def getFraction(x):
+    &#39;Return the fraction part of x: x - floor(x)&#39;
+    return x - math.floor(x)
+    
+def gomoryCut(lp, integerIndices = None, sense = &#39;&gt;=&#39;, sol = None,
+              rowInds = None, value = None, epsilon = .01):
+    &#39;&#39;&#39;Return the Gomory cut of rows in ``rowInds`` of lp 
+    (a CyClpSimplex object)&#39;&#39;&#39;
+    cuts = []
+    if sol is None:
+        sol = lp.primalVariableSolution[&#39;x&#39;]
+    if rowInds is None:
+        rowInds = list(range(lp.nConstraints))
+    if integerIndices is None:
+        integerIndices = list(range(lp.nVariables))
+    for row in rowInds:
+        basicVarInd = lp.basicVariables[row]
+        if (basicVarInd in integerIndices) and (not isInt(sol[basicVarInd], epsilon)):
+            f0 = getFraction(sol[basicVarInd])
+            f = []
+            for i in range(lp.nVariables):
+                if i in lp.basicVariables:
+                    #This is to try to avoid getting very small numbers that 
+                    #should be zero
+                    f.append(0)
+                else:
+                    f.append(getFraction(lp.tableau[row, i]))
+            pi = np.array([old_div(f[j],f0) if f[j] &lt;= f0 
+                           else old_div((1-f[j]),(1-f0)) for j in range(lp.nVariables)])
+            pi_slacks = np.array([old_div(x,f0) if x &gt; 0 else old_div(-x,(1-f0))  
+                                 for x in lp.tableau[row, lp.nVariables:]])
+            pi -= pi_slacks * lp.coefMatrix
+            pi0 = (1 - np.dot(pi_slacks, lp.constraintsUpper) if sense == &#39;&lt;=&#39;
+                   else 1 + np.dot(pi_slacks, lp.constraintsUpper))
+            if sense == &#39;&gt;=&#39;:
+                cuts.append((pi, pi0))
+            else:
+                cuts.append((-pi, -pi0))
+    return cuts, []
+            
+def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = &#39;&gt;=&#39;,
+                       sol = None, debug_print = False, use_cylp = True):
+
+    me = &#34;cglp_cuts: &#34;
+
+    if sol is None:
+        sol = lp.primalVariableSolution[&#39;x&#39;]
+    infinity = lp.getCoinInfinity()
+
+    if debug_print:
+        print(me, &#34;constraints sense = &#34;, sense)
+        print(me, &#34;con lower bounds = &#34;, lp.constraintsLower)
+        print(me, &#34;con upper bounds = &#34;, lp.constraintsUpper)
+        print(me, &#34;con matrix = &#34;, lp.coefMatrix.toarray())
+        print(me, &#34;vars lower bounds = &#34;, lp.variablesLower)
+        print(me, &#34;vars upper bounds = &#34;, lp.variablesUpper)
+        print(me, &#34;Assuming objective is to minimize&#34;)
+        print(me, &#34;objective = &#34;, lp.objective)
+        print(me, &#34;infinity = &#34;, infinity)
+        print(me, &#34;current point = &#34;, sol)
+        print(me, &#34;pi = &#34;, pi)
+        print(me, &#34;pi0 = &#34;, pi0)
+
+    A = lp.coefMatrix.toarray()
+    #c = lp.objective
+    ## Convert to &gt;= if the problem is in &lt;= form.
+    if sense == &#39;&lt;=&#39;:
+        b = deepcopy(lp.constraintsUpper)
+        b = -1.0*b
+        A = -1.0*A
+    else:
+        b = deepcopy(lp.constraintsLower)
+
+    #Add bounds on variables as explicit constraints
+    for i in range(lp.nCols):
+        e = np.zeros((1, lp.nCols))
+        if lp.variablesUpper[i] &lt; infinity:
+            b.resize(b.size+1, refcheck = False)
+            e[0, i] = -1.0
+            b[-1] = -1.0*lp.variablesUpper[i]
+            A = np.vstack((A, e))
+        if lp.variablesLower[i] &gt; -infinity:
+            b.resize(b.size+1, refcheck = False)
+            e[0, i] = 1.0
+            b[-1] = lp.variablesLower[i]
+            A = np.vstack((A, e))
+    A = csc_matrixPlus(A)
+
+    ############################################################################
+    ## There are two given LPs:
+    ## s.t. Ax &gt;= b           s.t. Ax &gt;= b
+    ##   -pi.x &gt;= -pi_0          pi.x &gt;= pi_0+1
+    ## A, b, c, pi, pi_0 are given
+    ##
+    ## CGLP: alpha.x &gt;= beta should be valid for both LPs above
+    ##
+    ## min alpha.x* - beta
+    ## uA - u0.pi = alpha
+    ## vA + v0.pi = alpha
+    ## ub - u0.pi_0 &gt;= beta 
+    ## vb + v0.(pi_0 + 1) &gt;= beta 
+    ## u0 + v0 = 1
+    ## u, v, u0, v0 &gt;= 0
+    ## if min value comes out &lt; 0, then (alpha.x &gt;= beta) is a cut.
+    ############################################################################
+
+    b = CyLPArray(b)
+    pi = CyLPArray(pi)
+    
+    Atran = A.transpose()
+
+    if use_cylp:
+        sp = CyLPModel()
+        u = sp.addVariable(&#39;u&#39;, A.shape[0], isInt = False)
+        v = sp.addVariable(&#39;v&#39;, A.shape[0], isInt = False)
+        u0 = sp.addVariable(&#39;u0&#39;, 1, isInt = False)
+        v0 = sp.addVariable(&#39;v0&#39;, 1, isInt = False)
+        alpha = sp.addVariable(&#39;alpha&#39;, lp.nVariables, isInt = False)
+        beta = sp.addVariable(&#39;beta&#39;, 1, isInt = False)
+    
+        for i in range(A.shape[1]):
+            sp += alpha[i] - sum(Atran[i,j]*u[j] for j in range(A.shape[0])) + pi[i]*u0 == 0
+        for i in range(A.shape[1]):
+            sp += alpha[i] - sum(Atran[i,j]*v[j] for j in range(A.shape[0])) - pi[i]*v0 == 0
+        sp += beta - b*u + pi0*u0 &lt;= 0
+        sp += beta - b*v - (pi0 + 1)*v0 &lt;= 0
+        sp += u0 + v0 == 1
+        if sense == &#39;&lt;=&#39;:
+            sp += u &gt;= 0
+            sp += v &gt;= 0
+            sp += u0 &gt;= 0
+            sp += v0 &gt;= 0
+        else:
+            #TODO this direction is not debugged
+            # Is this all we need?
+            sp += u &lt;= 0
+            sp += v &lt;= 0
+            sp += u0 &lt;= 0
+            sp += v0 &lt;= 0
+        sp.objective = sum(sol[i]*alpha[i] for i in range(A.shape[1])) - beta
+        cbcModel = CyClpSimplex(sp).getCbcModel()
+        cbcModel.logLevel = 0
+        #cbcModel.maximumSeconds = 5
+        cbcModel.solve()
+        beta = cbcModel.primalVariableSolution[&#39;beta&#39;][0]
+        alpha = cbcModel.primalVariableSolution[&#39;alpha&#39;]
+        u = cbcModel.primalVariableSolution[&#39;u&#39;]
+        v = cbcModel.primalVariableSolution[&#39;v&#39;]
+        u0 = cbcModel.primalVariableSolution[&#39;u0&#39;][0]
+        v0 = cbcModel.primalVariableSolution[&#39;v0&#39;][0]
+        if debug_print:
+            print(&#39;Objective Value: &#39;, cbcModel.objectiveValue)
+            print(&#39;alpha: &#39;, alpha, &#39;alpha*sol: &#39;, np.dot(alpha, sol))
+            print(&#39;beta: &#39;, beta)
+            print(&#39;Violation of cut: &#39;,  np.dot(alpha, sol) - beta)
+    else: 
+        CG = AbstractModel()
+        CG.u = Var(list(range(A.shape[0])), domain=NonNegativeReals,
+                   bounds = (0.0, None))
+        CG.v = Var(list(range(A.shape[0])), domain=NonNegativeReals,
+                   bounds = (0.0, None))
+        CG.u0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
+        CG.v0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
+        CG.alpha = Var(list(range(A.shape[0])), domain=Reals,
+                       bounds = (None, None))    
+        CG.beta  = Var(domain=Reals, bounds = (None, None))    
+        
+        ## Constraints
+        def pi_rule_left(CG, i):
+            x = float(pi[i])
+            return(sum(Atran[i, j]*CG.u[j] for j in range(A.shape[0])) -
+                   x*CG.u0 - CG.alpha[i] == 0.0)
+        CG.pi_rule_left = Constraint(list(range(A.shape[1])), rule=pi_rule_left)
+        
+        def pi_rule_right(CG, i):
+            x = float(pi[i])
+            return(sum(Atran[i, j]*CG.v[j] for j in range(A.shape[0])) +
+                   x*CG.v0 - CG.alpha[i] == 0.0)
+        CG.pi_rule_right = Constraint(list(range(A.shape[1])), rule=pi_rule_right)
+        
+        def pi0_rule_left(CG):
+            return(sum(b[j]*CG.u[j] for j in range(A.shape[0])) -
+                   pi0*CG.u0 - CG.beta &gt;= 0.0)
+        CG.pi0_rule_left = Constraint(rule=pi0_rule_left)
+        
+        def pi0_rule_right(CG):
+            return(sum(b[j]*CG.v[j] for j in range(A.shape[0])) +
+                   (pi0 + 1)*CG.v0 - CG.beta &gt;= 0.0)
+        CG.pi0_rule_right = Constraint(rule=pi0_rule_right)
+        
+        def normalization_rule(CG):
+            return(CG.u0 + CG.v0 == 1.0)
+        CG.normalization_rule = Constraint(rule=normalization_rule)
+        
+        def objective_rule(CG):
+            return(sum(sol[i]*CG.alpha[i] for i in range(A.shape[1])) -
+                   CG.beta)
+        CG.objective = Objective(sense=minimize, rule=objective_rule)
+        
+        opt = SolverFactory(&#34;cbc&#34;)
+        instance = CG.create_instance()
+        #instance.pprint()
+        #instance.write(&#34;foo.nl&#34;, format = &#34;nl&#34;)
+        #opt.options[&#39;bonmin.bb_log_level&#39;] = 5
+        #opt.options[&#39;bonmin.bb_log_interval&#39;] = 1
+        results = opt.solve(instance, tee=False)
+        #results = opt.solve(instance)
+        instance.solutions.load_from(results)
+        
+        beta = instance.beta.value
+        alpha = np.array([instance.alpha[i].value
+                          for i in range(lp.nVariables)])
+    violation =  beta - np.dot(alpha, sol) 
+    if debug_print:
+        print(me, &#39;Beta: &#39;, beta)
+        print(me, &#39;alpha: &#39;, alpha)
+        print(me, &#39;Violation of cut: &#39;, violation)
+        
+    if violation &gt; 0.001:
+        if (sense == &#34;&gt;=&#34;):
+            return [(alpha, beta)]
+        else:
+            return [(-alpha, -beta)]
+    return []
+
+def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
+    #TODO: Check sense of inequalities by looking explicitly at
+    #      lp.constraintsUpper and lp.constraintsLower
+    p = Polyhedron2D(A = A, b = b)
+    f = Figure()
+    f.add_polyhedron(p, label = &#39;Polyhedron $P$&#39;)
+    f.set_xlim(p.xlim)
+    f.set_ylim(p.ylim)
+    pI = p.make_integer_hull()
+    f.add_polyhedron(pI, show_int_points = True, color = &#39;red&#39;,
+                     linestyle = &#39;dashed&#39;,
+                     label = &#39;Convex hull of integer points&#39;)
+    for (coeff, r) in cuts:
+        f.add_line(coeff, r, p.xlim, p.ylim, color = &#39;green&#39;, linestyle = &#39;dashed&#39;)
+    for (coeff, r) in disj:
+        f.add_line(coeff, r, p.xlim, p.ylim, color = &#39;red&#39;, linestyle = &#39;dashed&#39;)
+        f.add_line(coeff, r+1, p.xlim, p.ylim, color = &#39;red&#39;, linestyle = &#39;dashed&#39;)
+    if sol is not None:
+        f.add_point(sol, radius = .05)
+    f.show()
+
+
+def solve(m, whichCuts = [], use_cglp = False,
+          debug_print = False, epsilon = .01, 
+          max_iter = 100, max_cuts = 10, display = False):    
+
+    if not isinstance(m, MILPInstance):
+        print(&#34;Invalid first parameter: Must be of type MILPInstance&#34;)
+        exit
+
+    if not DISPLAY_ENABLED:
+        display = False
+        
+    if m.lp.nCols &gt; 2 or m.A is None:
+        display = False
+    m.lp.logLevel = 0
+    
+    if display:
+        disp_relaxation(m.A, m.b)
+    
+    disj = []
+    for i in range(max_iter):
+        print(&#39;Iteration &#39;, i)
+        m.lp.primal(startFinishOptions = &#39;x&#39;)
+        print(&#39;Current bound:&#39;, m.lp.objectiveValue)
+        #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
+        #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
+        #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
+        #rhs = lp.rhs
+        if m.sense == &#39;&lt;=&#39;:
+            rhs = np.dot(m.lp.basisInverse, m.lp.constraintsUpper)
+        else:
+            rhs = np.dot(m.lp.basisInverse, m.lp.constraintsLower)
+        sol = m.lp.primalVariableSolution[&#39;x&#39;]
+        if debug_print:
+            print(&#39;Current basis inverse:&#39;)
+            print(m.lp.basisInverse)
+            print(&#39;Condition number of basis inverse&#39;)
+            print(np.linalg.cond(m.lp.basisInverse))
+            print(&#34;Current tableaux:&#34;)
+            print(m.lp.tableau)
+            print(&#34;Current right hand side:\n&#34;, rhs)
+            #print lp.rhs
+        print(&#39;Current solution: &#39;, sol)
+        if isInt(sol[m.integerIndices], epsilon):
+            print(&#39;Integer solution found!&#39;)
+            break
+        cuts = []
+        if disj == []:
+            for (cg, args) in whichCuts:
+                tmp_cuts, tmp_disj = cg(m.lp, m.integerIndices, m.sense, sol, **args)
+                cuts += tmp_cuts
+                disj += tmp_disj
+        cur_num_cuts = len(cuts)
+        if use_cglp and len(disj) &gt; 0:
+            for d in disj:
+                cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense)
+        if cuts == []:
+            if disj == []:
+                print(&#39;No cuts found and terminating!&#39;)
+                break
+            else:
+                print(&#39;No cuts found but continuing!&#39;)
+        if display:
+            disp_relaxation(m.A, m.b, cuts, sol, disj)
+        if len(cuts) == cur_num_cuts:
+            disj = []
+        for (coeff, r) in cuts[:max_cuts]:
+            #TODO sort cuts by degree of violation
+            if m.sense == &#39;&lt;=&#39;:
+                print(&#39;Adding cut: &#39;, coeff, &#39;&lt;=&#39;, r)
+                m.lp += CyLPArray(coeff) * m.x &lt;= r
+            else:
+                print(&#39;Adding cut: &#39;, coeff, &#39;&gt;=&#39;, r)
+                m.lp += CyLPArray(coeff) * m.x &gt;= r
+            if display:
+                m.A.append(coeff.tolist())
+                m.b.append(r)
+    
+    if display:
+        disp_relaxation(m.A, m.b)
+
+if __name__ == &#39;__main__&#39;:
+            
+    solve(MILPInstance(module_name = &#39;MIP6&#39;), whichCuts = [(gomoryCut, {})], display = True, debug_print = True,
+          use_cglp = False)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="coinor.cuppy.cuttingPlanes.disjunctionToCut"><code class="name flex">
+<span>def <span class="ident">disjunctionToCut</span></span>(<span>lp, pi, pi0, integerIndices=None, sense=&#39;&gt;=&#39;, sol=None, debug_print=False, use_cylp=True)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = &#39;&gt;=&#39;,
+                       sol = None, debug_print = False, use_cylp = True):
+
+    me = &#34;cglp_cuts: &#34;
+
+    if sol is None:
+        sol = lp.primalVariableSolution[&#39;x&#39;]
+    infinity = lp.getCoinInfinity()
+
+    if debug_print:
+        print(me, &#34;constraints sense = &#34;, sense)
+        print(me, &#34;con lower bounds = &#34;, lp.constraintsLower)
+        print(me, &#34;con upper bounds = &#34;, lp.constraintsUpper)
+        print(me, &#34;con matrix = &#34;, lp.coefMatrix.toarray())
+        print(me, &#34;vars lower bounds = &#34;, lp.variablesLower)
+        print(me, &#34;vars upper bounds = &#34;, lp.variablesUpper)
+        print(me, &#34;Assuming objective is to minimize&#34;)
+        print(me, &#34;objective = &#34;, lp.objective)
+        print(me, &#34;infinity = &#34;, infinity)
+        print(me, &#34;current point = &#34;, sol)
+        print(me, &#34;pi = &#34;, pi)
+        print(me, &#34;pi0 = &#34;, pi0)
+
+    A = lp.coefMatrix.toarray()
+    #c = lp.objective
+    ## Convert to &gt;= if the problem is in &lt;= form.
+    if sense == &#39;&lt;=&#39;:
+        b = deepcopy(lp.constraintsUpper)
+        b = -1.0*b
+        A = -1.0*A
+    else:
+        b = deepcopy(lp.constraintsLower)
+
+    #Add bounds on variables as explicit constraints
+    for i in range(lp.nCols):
+        e = np.zeros((1, lp.nCols))
+        if lp.variablesUpper[i] &lt; infinity:
+            b.resize(b.size+1, refcheck = False)
+            e[0, i] = -1.0
+            b[-1] = -1.0*lp.variablesUpper[i]
+            A = np.vstack((A, e))
+        if lp.variablesLower[i] &gt; -infinity:
+            b.resize(b.size+1, refcheck = False)
+            e[0, i] = 1.0
+            b[-1] = lp.variablesLower[i]
+            A = np.vstack((A, e))
+    A = csc_matrixPlus(A)
+
+    ############################################################################
+    ## There are two given LPs:
+    ## s.t. Ax &gt;= b           s.t. Ax &gt;= b
+    ##   -pi.x &gt;= -pi_0          pi.x &gt;= pi_0+1
+    ## A, b, c, pi, pi_0 are given
+    ##
+    ## CGLP: alpha.x &gt;= beta should be valid for both LPs above
+    ##
+    ## min alpha.x* - beta
+    ## uA - u0.pi = alpha
+    ## vA + v0.pi = alpha
+    ## ub - u0.pi_0 &gt;= beta 
+    ## vb + v0.(pi_0 + 1) &gt;= beta 
+    ## u0 + v0 = 1
+    ## u, v, u0, v0 &gt;= 0
+    ## if min value comes out &lt; 0, then (alpha.x &gt;= beta) is a cut.
+    ############################################################################
+
+    b = CyLPArray(b)
+    pi = CyLPArray(pi)
+    
+    Atran = A.transpose()
+
+    if use_cylp:
+        sp = CyLPModel()
+        u = sp.addVariable(&#39;u&#39;, A.shape[0], isInt = False)
+        v = sp.addVariable(&#39;v&#39;, A.shape[0], isInt = False)
+        u0 = sp.addVariable(&#39;u0&#39;, 1, isInt = False)
+        v0 = sp.addVariable(&#39;v0&#39;, 1, isInt = False)
+        alpha = sp.addVariable(&#39;alpha&#39;, lp.nVariables, isInt = False)
+        beta = sp.addVariable(&#39;beta&#39;, 1, isInt = False)
+    
+        for i in range(A.shape[1]):
+            sp += alpha[i] - sum(Atran[i,j]*u[j] for j in range(A.shape[0])) + pi[i]*u0 == 0
+        for i in range(A.shape[1]):
+            sp += alpha[i] - sum(Atran[i,j]*v[j] for j in range(A.shape[0])) - pi[i]*v0 == 0
+        sp += beta - b*u + pi0*u0 &lt;= 0
+        sp += beta - b*v - (pi0 + 1)*v0 &lt;= 0
+        sp += u0 + v0 == 1
+        if sense == &#39;&lt;=&#39;:
+            sp += u &gt;= 0
+            sp += v &gt;= 0
+            sp += u0 &gt;= 0
+            sp += v0 &gt;= 0
+        else:
+            #TODO this direction is not debugged
+            # Is this all we need?
+            sp += u &lt;= 0
+            sp += v &lt;= 0
+            sp += u0 &lt;= 0
+            sp += v0 &lt;= 0
+        sp.objective = sum(sol[i]*alpha[i] for i in range(A.shape[1])) - beta
+        cbcModel = CyClpSimplex(sp).getCbcModel()
+        cbcModel.logLevel = 0
+        #cbcModel.maximumSeconds = 5
+        cbcModel.solve()
+        beta = cbcModel.primalVariableSolution[&#39;beta&#39;][0]
+        alpha = cbcModel.primalVariableSolution[&#39;alpha&#39;]
+        u = cbcModel.primalVariableSolution[&#39;u&#39;]
+        v = cbcModel.primalVariableSolution[&#39;v&#39;]
+        u0 = cbcModel.primalVariableSolution[&#39;u0&#39;][0]
+        v0 = cbcModel.primalVariableSolution[&#39;v0&#39;][0]
+        if debug_print:
+            print(&#39;Objective Value: &#39;, cbcModel.objectiveValue)
+            print(&#39;alpha: &#39;, alpha, &#39;alpha*sol: &#39;, np.dot(alpha, sol))
+            print(&#39;beta: &#39;, beta)
+            print(&#39;Violation of cut: &#39;,  np.dot(alpha, sol) - beta)
+    else: 
+        CG = AbstractModel()
+        CG.u = Var(list(range(A.shape[0])), domain=NonNegativeReals,
+                   bounds = (0.0, None))
+        CG.v = Var(list(range(A.shape[0])), domain=NonNegativeReals,
+                   bounds = (0.0, None))
+        CG.u0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
+        CG.v0 = Var(domain=NonNegativeReals, bounds = (0.0, None))
+        CG.alpha = Var(list(range(A.shape[0])), domain=Reals,
+                       bounds = (None, None))    
+        CG.beta  = Var(domain=Reals, bounds = (None, None))    
+        
+        ## Constraints
+        def pi_rule_left(CG, i):
+            x = float(pi[i])
+            return(sum(Atran[i, j]*CG.u[j] for j in range(A.shape[0])) -
+                   x*CG.u0 - CG.alpha[i] == 0.0)
+        CG.pi_rule_left = Constraint(list(range(A.shape[1])), rule=pi_rule_left)
+        
+        def pi_rule_right(CG, i):
+            x = float(pi[i])
+            return(sum(Atran[i, j]*CG.v[j] for j in range(A.shape[0])) +
+                   x*CG.v0 - CG.alpha[i] == 0.0)
+        CG.pi_rule_right = Constraint(list(range(A.shape[1])), rule=pi_rule_right)
+        
+        def pi0_rule_left(CG):
+            return(sum(b[j]*CG.u[j] for j in range(A.shape[0])) -
+                   pi0*CG.u0 - CG.beta &gt;= 0.0)
+        CG.pi0_rule_left = Constraint(rule=pi0_rule_left)
+        
+        def pi0_rule_right(CG):
+            return(sum(b[j]*CG.v[j] for j in range(A.shape[0])) +
+                   (pi0 + 1)*CG.v0 - CG.beta &gt;= 0.0)
+        CG.pi0_rule_right = Constraint(rule=pi0_rule_right)
+        
+        def normalization_rule(CG):
+            return(CG.u0 + CG.v0 == 1.0)
+        CG.normalization_rule = Constraint(rule=normalization_rule)
+        
+        def objective_rule(CG):
+            return(sum(sol[i]*CG.alpha[i] for i in range(A.shape[1])) -
+                   CG.beta)
+        CG.objective = Objective(sense=minimize, rule=objective_rule)
+        
+        opt = SolverFactory(&#34;cbc&#34;)
+        instance = CG.create_instance()
+        #instance.pprint()
+        #instance.write(&#34;foo.nl&#34;, format = &#34;nl&#34;)
+        #opt.options[&#39;bonmin.bb_log_level&#39;] = 5
+        #opt.options[&#39;bonmin.bb_log_interval&#39;] = 1
+        results = opt.solve(instance, tee=False)
+        #results = opt.solve(instance)
+        instance.solutions.load_from(results)
+        
+        beta = instance.beta.value
+        alpha = np.array([instance.alpha[i].value
+                          for i in range(lp.nVariables)])
+    violation =  beta - np.dot(alpha, sol) 
+    if debug_print:
+        print(me, &#39;Beta: &#39;, beta)
+        print(me, &#39;alpha: &#39;, alpha)
+        print(me, &#39;Violation of cut: &#39;, violation)
+        
+    if violation &gt; 0.001:
+        if (sense == &#34;&gt;=&#34;):
+            return [(alpha, beta)]
+        else:
+            return [(-alpha, -beta)]
+    return []</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.cuttingPlanes.disp_relaxation"><code class="name flex">
+<span>def <span class="ident">disp_relaxation</span></span>(<span>A, b, cuts=[], sol=None, disj=[])</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
+    #TODO: Check sense of inequalities by looking explicitly at
+    #      lp.constraintsUpper and lp.constraintsLower
+    p = Polyhedron2D(A = A, b = b)
+    f = Figure()
+    f.add_polyhedron(p, label = &#39;Polyhedron $P$&#39;)
+    f.set_xlim(p.xlim)
+    f.set_ylim(p.ylim)
+    pI = p.make_integer_hull()
+    f.add_polyhedron(pI, show_int_points = True, color = &#39;red&#39;,
+                     linestyle = &#39;dashed&#39;,
+                     label = &#39;Convex hull of integer points&#39;)
+    for (coeff, r) in cuts:
+        f.add_line(coeff, r, p.xlim, p.ylim, color = &#39;green&#39;, linestyle = &#39;dashed&#39;)
+    for (coeff, r) in disj:
+        f.add_line(coeff, r, p.xlim, p.ylim, color = &#39;red&#39;, linestyle = &#39;dashed&#39;)
+        f.add_line(coeff, r+1, p.xlim, p.ylim, color = &#39;red&#39;, linestyle = &#39;dashed&#39;)
+    if sol is not None:
+        f.add_point(sol, radius = .05)
+    f.show()</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.cuttingPlanes.getFraction"><code class="name flex">
+<span>def <span class="ident">getFraction</span></span>(<span>x)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return the fraction part of x: x - floor(x)</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def getFraction(x):
+    &#39;Return the fraction part of x: x - floor(x)&#39;
+    return x - math.floor(x)</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.cuttingPlanes.gomoryCut"><code class="name flex">
+<span>def <span class="ident">gomoryCut</span></span>(<span>lp, integerIndices=None, sense=&#39;&gt;=&#39;, sol=None, rowInds=None, value=None, epsilon=0.01)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return the Gomory cut of rows in <code>rowInds</code> of lp
+(a CyClpSimplex object)</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def gomoryCut(lp, integerIndices = None, sense = &#39;&gt;=&#39;, sol = None,
+              rowInds = None, value = None, epsilon = .01):
+    &#39;&#39;&#39;Return the Gomory cut of rows in ``rowInds`` of lp 
+    (a CyClpSimplex object)&#39;&#39;&#39;
+    cuts = []
+    if sol is None:
+        sol = lp.primalVariableSolution[&#39;x&#39;]
+    if rowInds is None:
+        rowInds = list(range(lp.nConstraints))
+    if integerIndices is None:
+        integerIndices = list(range(lp.nVariables))
+    for row in rowInds:
+        basicVarInd = lp.basicVariables[row]
+        if (basicVarInd in integerIndices) and (not isInt(sol[basicVarInd], epsilon)):
+            f0 = getFraction(sol[basicVarInd])
+            f = []
+            for i in range(lp.nVariables):
+                if i in lp.basicVariables:
+                    #This is to try to avoid getting very small numbers that 
+                    #should be zero
+                    f.append(0)
+                else:
+                    f.append(getFraction(lp.tableau[row, i]))
+            pi = np.array([old_div(f[j],f0) if f[j] &lt;= f0 
+                           else old_div((1-f[j]),(1-f0)) for j in range(lp.nVariables)])
+            pi_slacks = np.array([old_div(x,f0) if x &gt; 0 else old_div(-x,(1-f0))  
+                                 for x in lp.tableau[row, lp.nVariables:]])
+            pi -= pi_slacks * lp.coefMatrix
+            pi0 = (1 - np.dot(pi_slacks, lp.constraintsUpper) if sense == &#39;&lt;=&#39;
+                   else 1 + np.dot(pi_slacks, lp.constraintsUpper))
+            if sense == &#39;&gt;=&#39;:
+                cuts.append((pi, pi0))
+            else:
+                cuts.append((-pi, -pi0))
+    return cuts, []</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.cuttingPlanes.isInt"><code class="name flex">
+<span>def <span class="ident">isInt</span></span>(<span>x, epsilon)</span>
+</code></dt>
+<dd>
+<section class="desc"><p>Return True if x is an integer, or if x is a numpy array
+with all integer elements, False otherwise</p></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def isInt(x, epsilon):
+    &#39;&#39;&#39;
+    Return True if x is an integer, or if x is a numpy array
+    with all integer elements, False otherwise
+    &#39;&#39;&#39;
+    if isinstance(x, (int, float)):
+        return abs(math.floor(x) - x) &lt; epsilon
+    return (np.abs(np.around(x) - x) &lt; epsilon).all()</code></pre>
+</details>
+</dd>
+<dt id="coinor.cuppy.cuttingPlanes.solve"><code class="name flex">
+<span>def <span class="ident">solve</span></span>(<span>m, whichCuts=[], use_cglp=False, debug_print=False, epsilon=0.01, max_iter=100, max_cuts=10, display=False)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
+<details class="source">
+<summary>Source code</summary>
+<pre><code class="python">def solve(m, whichCuts = [], use_cglp = False,
+          debug_print = False, epsilon = .01, 
+          max_iter = 100, max_cuts = 10, display = False):    
+
+    if not isinstance(m, MILPInstance):
+        print(&#34;Invalid first parameter: Must be of type MILPInstance&#34;)
+        exit
+
+    if not DISPLAY_ENABLED:
+        display = False
+        
+    if m.lp.nCols &gt; 2 or m.A is None:
+        display = False
+    m.lp.logLevel = 0
+    
+    if display:
+        disp_relaxation(m.A, m.b)
+    
+    disj = []
+    for i in range(max_iter):
+        print(&#39;Iteration &#39;, i)
+        m.lp.primal(startFinishOptions = &#39;x&#39;)
+        print(&#39;Current bound:&#39;, m.lp.objectiveValue)
+        #Binv = np.zeros(shape = (lp.nConstraints, lp.nConstraints))
+        #for i in range(lp.nVariables, lp.nVariables+lp.nConstraints):
+        #    lp.getBInvACol(i, Binv[i-lp.nVariables,:])
+        #rhs = lp.rhs
+        if m.sense == &#39;&lt;=&#39;:
+            rhs = np.dot(m.lp.basisInverse, m.lp.constraintsUpper)
+        else:
+            rhs = np.dot(m.lp.basisInverse, m.lp.constraintsLower)
+        sol = m.lp.primalVariableSolution[&#39;x&#39;]
+        if debug_print:
+            print(&#39;Current basis inverse:&#39;)
+            print(m.lp.basisInverse)
+            print(&#39;Condition number of basis inverse&#39;)
+            print(np.linalg.cond(m.lp.basisInverse))
+            print(&#34;Current tableaux:&#34;)
+            print(m.lp.tableau)
+            print(&#34;Current right hand side:\n&#34;, rhs)
+            #print lp.rhs
+        print(&#39;Current solution: &#39;, sol)
+        if isInt(sol[m.integerIndices], epsilon):
+            print(&#39;Integer solution found!&#39;)
+            break
+        cuts = []
+        if disj == []:
+            for (cg, args) in whichCuts:
+                tmp_cuts, tmp_disj = cg(m.lp, m.integerIndices, m.sense, sol, **args)
+                cuts += tmp_cuts
+                disj += tmp_disj
+        cur_num_cuts = len(cuts)
+        if use_cglp and len(disj) &gt; 0:
+            for d in disj:
+                cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense)
+        if cuts == []:
+            if disj == []:
+                print(&#39;No cuts found and terminating!&#39;)
+                break
+            else:
+                print(&#39;No cuts found but continuing!&#39;)
+        if display:
+            disp_relaxation(m.A, m.b, cuts, sol, disj)
+        if len(cuts) == cur_num_cuts:
+            disj = []
+        for (coeff, r) in cuts[:max_cuts]:
+            #TODO sort cuts by degree of violation
+            if m.sense == &#39;&lt;=&#39;:
+                print(&#39;Adding cut: &#39;, coeff, &#39;&lt;=&#39;, r)
+                m.lp += CyLPArray(coeff) * m.x &lt;= r
+            else:
+                print(&#39;Adding cut: &#39;, coeff, &#39;&gt;=&#39;, r)
+                m.lp += CyLPArray(coeff) * m.x &gt;= r
+            if display:
+                m.A.append(coeff.tolist())
+                m.b.append(r)
+    
+    if display:
+        disp_relaxation(m.A, m.b)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="coinor.cuppy" href="index.html">coinor.cuppy</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="coinor.cuppy.cuttingPlanes.disjunctionToCut" href="#coinor.cuppy.cuttingPlanes.disjunctionToCut">disjunctionToCut</a></code></li>
+<li><code><a title="coinor.cuppy.cuttingPlanes.disp_relaxation" href="#coinor.cuppy.cuttingPlanes.disp_relaxation">disp_relaxation</a></code></li>
+<li><code><a title="coinor.cuppy.cuttingPlanes.getFraction" href="#coinor.cuppy.cuttingPlanes.getFraction">getFraction</a></code></li>
+<li><code><a title="coinor.cuppy.cuttingPlanes.gomoryCut" href="#coinor.cuppy.cuttingPlanes.gomoryCut">gomoryCut</a></code></li>
+<li><code><a title="coinor.cuppy.cuttingPlanes.isInt" href="#coinor.cuppy.cuttingPlanes.isInt">isInt</a></code></li>
+<li><code><a title="coinor.cuppy.cuttingPlanes.solve" href="#coinor.cuppy.cuttingPlanes.solve">solve</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.3</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>

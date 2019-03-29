@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.5.3" />
-<title>coinor.cuppy API documentation</title>
+<title>coinor.cuppy.examples.MIP7 API documentation</title>
 <meta name="description" content="" />
 <link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
 <link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
@@ -17,44 +17,47 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title"><code>coinor.cuppy</code> module</h1>
+<h1 class="title"><code>coinor.cuppy.examples.MIP7</code> module</h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>Source code</summary>
-<pre><code class="python">from __future__ import absolute_import
-from . import cuttingPlanes
-from . import genericSeparation
-from . import milpInstance</code></pre>
+<pre><code class="python">numVars = 2
+numCons = 5
+A = [#[4, 1],
+     [1, 4],
+#     [1, -1],
+     [-1, 0],
+     [0, -1]] 
+
+b = [#28,
+     27,
+#     1,
+     0,
+     0]
+
+c = [2, 5]
+obj_val = 2 
+sense = (&#39;Max&#39;, &#39;&lt;=&#39;)
+integerIndices = [0, 1]
+
+if __name__ == &#39;__main__&#39;:
+
+    try:
+        from coinor.cuppy.cuttingPlanes import solve, gomoryCut
+        from coinor.cuppy.milpInstance import MILPInstance
+    except ImportError:
+        from src.cuppy.cuttingPlanes import solve, gomoryCut
+        from src.cuppy.milpInstance import MILPInstance
+
+    m = MILPInstance(A = A, b = b, c = c, 
+                     sense = sense, integerIndices = integerIndices,
+                     numVars = numVars)
+    
+    solve(m, whichCuts = [(gomoryCut, {})], display = True, debug_print = True)</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
-<dl>
-<dt><code class="name"><a title="coinor.cuppy.cuttingPlanes" href="cuttingPlanes.html">coinor.cuppy.cuttingPlanes</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.examples" href="examples/index.html">coinor.cuppy.examples</a></code></dt>
-<dd>
-<section class="desc"></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.genericSeparation" href="genericSeparation.html">coinor.cuppy.genericSeparation</a></code></dt>
-<dd>
-<section class="desc"><h2 id="invcollection">InvCollection</h2>
-<p>attributes:
-prob:
-Original problem
-type: LpProblem
-iter:
-Iteration number
-…</p></section>
-</dd>
-<dt><code class="name"><a title="coinor.cuppy.milpInstance" href="milpInstance.html">coinor.cuppy.milpInstance</a></code></dt>
-<dd>
-<section class="desc"><p>Created on Apr 26, 2016 …</p></section>
-</dd>
-</dl>
 </section>
 <section>
 </section>
@@ -69,12 +72,9 @@ Iteration number
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="coinor.cuppy.cuttingPlanes" href="cuttingPlanes.html">coinor.cuppy.cuttingPlanes</a></code></li>
-<li><code><a title="coinor.cuppy.examples" href="examples/index.html">coinor.cuppy.examples</a></code></li>
-<li><code><a title="coinor.cuppy.genericSeparation" href="genericSeparation.html">coinor.cuppy.genericSeparation</a></code></li>
-<li><code><a title="coinor.cuppy.milpInstance" href="milpInstance.html">coinor.cuppy.milpInstance</a></code></li>
+<li><code><a title="coinor.cuppy.examples" href="index.html">coinor.cuppy.examples</a></code></li>
 </ul>
 </li>
 </ul>
