@@ -49,9 +49,6 @@ class MILPInstance(object):
             lp += x <= lp.variablesUpper
             lp += x >= lp.variablesLower
             lp.objective = lp.objective
-            self.A = None
-            self.b = None
-            self.c = None
             self.sense = '<='
             numVars = lp.nCols
         else:
@@ -65,13 +62,23 @@ class MILPInstance(object):
                 self.c = mip.c if hasattr(mip, 'c') else None
                 self.sense = mip.sense[1] if hasattr(mip, 'sense') else None
                 self.integerIndices = mip.integerIndices if hasattr(mip, 'integerIndices') else None
+                x_u = CyLPArray(mip.x_u) if hasattr(mip, 'x_u') else None
                 numVars = mip.numVars if hasattr(mip, 'numVars') else None
                 self.x_sep = mip.x_sep if hasattr(mip, 'x_sep') else None
                 if numVars is None and mip.A is not None:
                     numVars = len(mip.A)
        
-            if numVars is None:
-                raise "Must specify number of variables when problem is not"   
+                if numVars is None:
+                    raise "Must specify number of variables when problem is not"   
+            else:
+                self.A = A
+                self.b = b
+                self.c = c
+                self.points = points
+                self.rays = rays
+                self.sense = sense
+                self.integerIndices = integerIndices
+                x_u = None
                 
             lp = CyClpSimplex()
             if self.A is not None:
@@ -90,15 +97,12 @@ class MILPInstance(object):
             x = lp.addVariable('x', numVars)
             
             lp += x >= x_l
-            try:
-                x_u = CyLPArray(getattr(mip, 'x_u'))
+            if x_u is not None:
                 lp += x <= x_u
-            except:
-                x_u = None        
             lp += (A * x <= b if self.sense == '<=' else
                    A * x >= b)
             c = CyLPArray(self.c)
-            if self.sense is not None and mip.sense[0] == 'Max':
+            if self.sense is not None and self.sense[0] == 'Max':
                 lp.objective = -c * x
             else:
                 lp.objective = c * x
