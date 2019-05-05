@@ -17,22 +17,22 @@ from copy import deepcopy
 from cylp.py.utils.sparseUtil import csc_matrixPlus 
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray, CyLPModel
-from .milpInstance import MILPInstance
 PYOMO_INSTALLED = True
 try:
     from pyomo.environ import AbstractModel, Var, Constraint, SolverFactory
     from pyomo.environ import NonNegativeReals, NonPositiveReals, Reals, Set
     from pyomo.environ import Integers, Objective, minimize, value
 except ImportError:
-    print("PYOMO not found")
     PYOMO_INSTALLED = False
 
 DISPLAY_ENABLED = True
 try:
     from src.grumpy.polyhedron2D import Polyhedron2D, Figure
+    from src.cuppy.milpInstance import MILPInstance
 except ImportError:
     try:
         from coinor.grumpy.polyhedron2D import Polyhedron2D, Figure
+        from coinor.cuppy.milpInstance import MILPInstance
     except ImportError:
         DISPLAY_ENABLED = False
 
@@ -376,7 +376,7 @@ def solve(m, whichCuts = [], use_cglp = False,
 
 if __name__ == '__main__':
             
-    solve(MILPInstance(module_name = 'MIP6'), whichCuts = [(gomoryCut, {})], display = True, debug_print = True,
+    solve(MILPInstance(module_name = 'coinor.cuppy.examples.MIP6'), whichCuts = [(gomoryCut, {})], display = True, debug_print = True,
           use_cglp = False)
 
 

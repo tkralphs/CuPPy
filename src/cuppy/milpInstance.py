@@ -52,6 +52,7 @@ class MILPInstance(object):
             self.sense = '<='
             numVars = lp.nCols
         else:
+            min_or_max = None
             if module_name is not None:
                 # We got a module name, read the data from there
                 mip = ilib.import_module(module_name)
@@ -61,6 +62,7 @@ class MILPInstance(object):
                 rays = mip.rays if hasattr(mip, 'rays') else None
                 self.c = mip.c if hasattr(mip, 'c') else None
                 self.sense = mip.sense[1] if hasattr(mip, 'sense') else None
+                min_or_max = mip.sense[0] if hasattr(mip, 'sense') else None
                 self.integerIndices = mip.integerIndices if hasattr(mip, 'integerIndices') else None
                 x_u = CyLPArray(mip.x_u) if hasattr(mip, 'x_u') else None
                 numVars = mip.numVars if hasattr(mip, 'numVars') else None
@@ -76,7 +78,9 @@ class MILPInstance(object):
                 self.c = c
                 self.points = points
                 self.rays = rays
-                self.sense = sense
+                if sense is not None:
+                    self.sense = sense[1]
+                    min_or_max = sense[0]
                 self.integerIndices = integerIndices
                 x_u = None
                 
@@ -102,7 +106,7 @@ class MILPInstance(object):
             lp += (A * x <= b if self.sense == '<=' else
                    A * x >= b)
             c = CyLPArray(self.c)
-            if self.sense is not None and self.sense[0] == 'Max':
+            if min_or_max == 'Max':
                 lp.objective = -c * x
             else:
                 lp.objective = c * x
