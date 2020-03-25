@@ -38,21 +38,24 @@ except ImportError:
 
 sys.path.append('examples')
 
-def isInt(x, epsilon):
+EPS = 5
+
+def isInt(x, eps = EPS):
     '''
     Return True if x is an integer, or if x is a numpy array
     with all integer elements, False otherwise
     '''
     if isinstance(x, (int, float)):
-        return abs(math.floor(x) - x) < epsilon
-    return (np.abs(np.around(x) - x) < epsilon).all()
+        return abs(math.floor(x + 10**(-eps)) - x) < 10**(-eps)
+    return (np.abs(np.around(x) - x) < 10**(-eps)).all()
 
-def getFraction(x):
+def getFraction(x, eps = EPS):
     'Return the fraction part of x: x - floor(x)'
-    return x - math.floor(x)
-    
+#    return x - math.floor(x)
+    return np.around(x, decimals = eps) - math.floor(np.around(x, decimals = eps))
+
 def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
-              rowInds = None, value = None, epsilon = .01):
+              rowInds = None, value = None, eps = EPS):
     '''Return the Gomory cut of rows in ``rowInds`` of lp 
     (a CyClpSimplex object)'''
     cuts = []
@@ -64,8 +67,8 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
         integerIndices = list(range(lp.nVariables))
     for row in rowInds:
         basicVarInd = lp.basicVariables[row]
-        if (basicVarInd in integerIndices) and (not isInt(sol[basicVarInd], epsilon)):
-            f0 = getFraction(sol[basicVarInd])
+        if (basicVarInd in integerIndices) and (not isInt(sol[basicVarInd], eps)):
+            f0 = getFraction(sol[basicVarInd], eps)
             f = []
             for i in range(lp.nVariables):
                 if i in lp.basicVariables:
@@ -73,7 +76,7 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
                     #should be zero
                     f.append(0)
                 else:
-                    f.append(getFraction(lp.tableau[row, i]))
+                    f.append(getFraction(lp.tableau[row, i], eps))
             pi = np.array([old_div(f[j],f0) if f[j] <= f0 
                            else old_div((1-f[j]),(1-f0)) for j in range(lp.nVariables)])
             pi_slacks = np.array([old_div(x,f0) if x > 0 else old_div(-x,(1-f0))  
@@ -81,6 +84,8 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
             pi -= pi_slacks * lp.coefMatrix
             pi0 = (1 - np.dot(pi_slacks, lp.constraintsUpper) if sense == '<='
                    else 1 + np.dot(pi_slacks, lp.constraintsUpper))
+            pi = np.ceil(pi*(10**eps))/(10**eps)
+            pi0 = np.floor(pi0*(10**eps))/(10**eps)
             if sense == '>=':
                 cuts.append((pi, pi0))
             else:
@@ -88,7 +93,8 @@ def gomoryCut(lp, integerIndices = None, sense = '>=', sol = None,
     return cuts, []
             
 def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
-                       sol = None, debug_print = False, use_cylp = True):
+                     sol = None, debug_print = False, use_cylp = True,
+                     eps = EPS):
 
     me = "cglp_cuts: "
 
@@ -198,10 +204,10 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
         u0 = cbcModel.primalVariableSolution['u0'][0]
         v0 = cbcModel.primalVariableSolution['v0'][0]
         if debug_print:
-            print('Objective Value: ', cbcModel.objectiveValue)
-            print('alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol))
-            print('beta: ', beta)
-            print('Violation of cut: ',  np.dot(alpha, sol) - beta)
+            print(me, 'Objective Value: ', cbcModel.objectiveValue)
+            print(me, 'alpha: ', alpha, 'alpha*sol: ', np.dot(alpha, sol))
+            print(me, 'beta: ', beta)
+            print(me, 'Violation of cut: ',  np.dot(alpha, sol) - beta)
     else: 
         CG = AbstractModel()
         CG.u = Var(list(range(A.shape[0])), domain=NonNegativeReals,
@@ -265,7 +271,7 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
         print(me, 'alpha: ', alpha)
         print(me, 'Violation of cut: ', violation)
         
-    if violation > 0.001:
+    if violation > 10**(-eps):
         if (sense == ">="):
             return [(alpha, beta)]
         else:
@@ -295,7 +301,7 @@ def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
 
 
 def solve(m, whichCuts = [], use_cglp = False,
-          debug_print = False, epsilon = .01, 
+          debug_print = False, eps = EPS, 
           max_iter = 100, max_cuts = 10, display = False):    
 
     if not isinstance(m, MILPInstance):
@@ -329,26 +335,25 @@ def solve(m, whichCuts = [], use_cglp = False,
         if debug_print:
             print('Current basis inverse:')
             print(m.lp.basisInverse)
-            print('Condition number of basis inverse')
-            print(np.linalg.cond(m.lp.basisInverse))
-            print("Current tableaux:")
+            print('Condition number of basis inverse', np.around(np.linalg.cond(m.lp.basisInverse)))
+            print('Current tableaux:')
             print(m.lp.tableau)
-            print("Current right hand side:\n", rhs)
+            print('Current right hand side:\n', rhs)
             #print lp.rhs
         print('Current solution: ', sol)
-        if isInt(sol[m.integerIndices], epsilon):
+        if isInt(sol[m.integerIndices], eps):
             print('Integer solution found!')
             break
         cuts = []
         if disj == []:
             for (cg, args) in whichCuts:
-                tmp_cuts, tmp_disj = cg(m.lp, m.integerIndices, m.sense, sol, **args)
+                tmp_cuts, tmp_disj = cg(m.lp, m.integerIndices, m.sense, sol, **args, eps = eps)
                 cuts += tmp_cuts
                 disj += tmp_disj
         cur_num_cuts = len(cuts)
         if use_cglp and len(disj) > 0:
             for d in disj:
-                cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense)
+                cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense, eps = eps)
         if cuts == []:
             if disj == []:
                 print('No cuts found and terminating!')
