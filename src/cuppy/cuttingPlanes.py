@@ -319,6 +319,7 @@ def solve(m, whichCuts = [], use_cglp = False,
         disp_relaxation(m.A, m.b)
     
     disj = []
+    prev_sol = np.zeros((1, m.lp.nCols))
     for i in range(max_iter):
         print('Iteration ', i)
         m.lp.primal(startFinishOptions = 'x')
@@ -341,9 +342,23 @@ def solve(m, whichCuts = [], use_cglp = False,
             print('Current right hand side:\n', rhs)
             #print lp.rhs
         print('Current solution: ', sol)
+
+        if (sol - prev_sol).any():
+            prev_sol = sol
+        else:
+            print ("Solution repeated, stalling detected") 
+            print ("Exiting")
+            break
+
         if isInt(sol[m.integerIndices], eps):
             print('Integer solution found!')
             break
+
+        if np.around(np.linalg.cond(m.lp.basisInverse)) >= 10**32:
+            print ("Condition number of the basis matrix exceeds 10^32") 
+            print ("Exiting")
+            break
+
         cuts = []
         if disj == []:
             for (cg, args) in whichCuts:
