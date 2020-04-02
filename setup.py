@@ -4,7 +4,7 @@ from setuptools import setup
 import setuptools
 
 setup(name='coinor.cuppy',
-      version='0.9.6',
+      version='0.9.7',
       description='Cutting Plane Methods in Python (CuPPy)',
       long_description='''A collection of 'naive' implementations of basic
       cutting plane algorithms in Python. The collection contains a generator

@@ -278,7 +278,7 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
             return [(-alpha, -beta)]
     return []
 
-def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
+def disp_relaxation(A, b, cuts = [], sol = None, disj = [], filename = None):
     #TODO: Check sense of inequalities by looking explicitly at
     #      lp.constraintsUpper and lp.constraintsLower
     p = Polyhedron2D(A = A, b = b)
@@ -297,12 +297,10 @@ def disp_relaxation(A, b, cuts = [], sol = None, disj = []):
         f.add_line(coeff, r+1, p.xlim, p.ylim, color = 'red', linestyle = 'dashed')
     if sol is not None:
         f.add_point(sol, radius = .05)
-    f.show()
+    f.show(filename = filename)
 
-
-def solve(m, whichCuts = [], use_cglp = False,
-          debug_print = False, eps = EPS, 
-          max_iter = 100, max_cuts = 10, display = False):    
+def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS, 
+          max_iter = 100, max_cuts = 10, display = False, filename = None):    
 
     if not isinstance(m, MILPInstance):
         print("Invalid first parameter: Must be of type MILPInstance")
@@ -315,7 +313,9 @@ def solve(m, whichCuts = [], use_cglp = False,
         display = False
     m.lp.logLevel = 0
     
-    if display:
+    if display and filename is not None:
+        disp_relaxation(m.A, m.b, filename = filename+'.png')
+    elif display:
         disp_relaxation(m.A, m.b)
     
     disj = []
@@ -375,7 +375,9 @@ def solve(m, whichCuts = [], use_cglp = False,
                 break
             else:
                 print('No cuts found but continuing!')
-        if display:
+        if display and filename is not None:
+            disp_relaxation(m.A, m.b, cuts, sol, disj, filename = filename+str(i)+'.png')
+        elif display:
             disp_relaxation(m.A, m.b, cuts, sol, disj)
         if len(cuts) == cur_num_cuts:
             disj = []
@@ -396,8 +398,8 @@ def solve(m, whichCuts = [], use_cglp = False,
 
 if __name__ == '__main__':
             
-    solve(MILPInstance(module_name = 'coinor.cuppy.examples.MIP6'), whichCuts = [(gomoryCut, {})], display = True, debug_print = True,
-          use_cglp = False)
+    solve(MILPInstance(module_name = 'coinor.cuppy.examples.MIP6'), whichCuts = [(gomoryCut, {})],
+          display = True, debug_print = True, use_cglp = False)
 
 
 
