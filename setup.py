@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
-from setuptools import setup
-import setuptools
+from setuptools import setup, find_packages
 
 setup(name='coinor.cuppy',
-      version='0.9.7',
+      version='0.95.0',
       description='Cutting Plane Methods in Python (CuPPy)',
       long_description='''A collection of 'naive' implementations of basic
       cutting plane algorithms in Python. The collection contains a generator
@@ -28,8 +27,8 @@ setup(name='coinor.cuppy',
       license='Eclipse Public License',
       url='https://github.com/tkralphs/CuPPy/',
       namespace_packages=['coinor'],
-      packages=['coinor.cuppy','coinor.cuppy.examples','coinor'],
+      packages=[pkg.replace('src','coinor') for pkg in find_packages()],
       package_dir = {'coinor': 'src'},
-      install_requires=['coinor.grumpy>=0.9.0', 'pulp', 'cylp>=0.9.0',
+      install_requires=['coinor.grumpy>=0.95.0', 'pulp', 'cylp>=0.9.0',
                         'pypolyhedron']
      )
