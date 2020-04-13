@@ -371,6 +371,17 @@ def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS,
         if use_cglp and len(disj) > 0:
             for d in disj:
                 cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense, eps = eps)
+#        if use_cglp:
+#            if len(disj) > 0:
+#                for d in disj:
+#                    cuts += disjunctionToCut(m.lp, d[0], d[1], sense=m.sense, eps = eps)
+#            else:
+#                for row in range(m.lp.nConstraints):
+#                    basicVarInd = m.lp.basicVariables[row]
+#                    if (basicVarInd in m.integerIndices) and (not isInt(sol[basicVarInd], eps)):
+#                        e = np.zeros((1, m.lp.nCols))
+#                        e[0, basicVarInd] = 1
+#                        cuts += disjunctionToCut(m.lp, e, 1, sense=m.sense, eps = eps)
         if cuts == []:
             if disj == []:
                 print('No cuts found and terminating!')
