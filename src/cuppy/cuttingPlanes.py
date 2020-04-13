@@ -278,11 +278,10 @@ def disjunctionToCut(lp, pi, pi0, integerIndices = None, sense = '>=',
             return [(-alpha, -beta)]
     return []
 
-def disp_relaxation(A, b, cuts = [], sol = None, disj = [], filename = None):
+def disp_relaxation(f, A, b, cuts = [], sol = None, disj = [], filename = None):
     #TODO: Check sense of inequalities by looking explicitly at
     #      lp.constraintsUpper and lp.constraintsLower
     p = Polyhedron2D(A = A, b = b)
-    f = Figure()
     f.add_polyhedron(p, label = 'Polyhedron $P$')
     f.set_xlim(p.xlim)
     f.set_ylim(p.ylim)
@@ -308,15 +307,18 @@ def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS,
 
     if not DISPLAY_ENABLED:
         display = False
+    else:
+        f = Figure()
+
         
     if m.lp.nCols > 2 or m.A is None:
         display = False
     m.lp.logLevel = 0
     
     if display and filename is not None:
-        disp_relaxation(m.A, m.b, filename = filename+'.png')
+        disp_relaxation(f, m.A, m.b, filename = filename+'.png')
     elif display:
-        disp_relaxation(m.A, m.b)
+        disp_relaxation(f, m.A, m.b)
     
     disj = []
     prev_sol = np.zeros((1, m.lp.nCols))
@@ -376,9 +378,9 @@ def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS,
             else:
                 print('No cuts found but continuing!')
         if display and filename is not None:
-            disp_relaxation(m.A, m.b, cuts, sol, disj, filename = filename+str(i)+'.png')
+            disp_relaxation(f, m.A, m.b, cuts, sol, disj, filename = filename+str(i)+'.png')
         elif display:
-            disp_relaxation(m.A, m.b, cuts, sol, disj)
+            disp_relaxation(f, m.A, m.b, cuts, sol, disj)
         if len(cuts) == cur_num_cuts:
             disj = []
         for (coeff, r) in cuts[:max_cuts]:
@@ -394,7 +396,7 @@ def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS,
                 m.b.append(r)
     
     if display:
-        disp_relaxation(m.A, m.b)
+        disp_relaxation(f, m.A, m.b)
 
 if __name__ == '__main__':
             
