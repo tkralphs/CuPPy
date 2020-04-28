@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(name='coinor.cuppy',
-      version='0.95.0',
+      version='0.96.0',
       description='Cutting Plane Methods in Python (CuPPy)',
       long_description='''A collection of 'naive' implementations of basic
       cutting plane algorithms in Python. The collection contains a generator
