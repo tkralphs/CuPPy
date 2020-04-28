@@ -22,6 +22,7 @@ class MILPInstance(object):
     def __init__(self, module_name = None, file_name = None,
                  A = None, b = None, c = None,
                  points = None, rays = None,
+                 l = None, u = None,
                  sense = None, integerIndices = None, 
                  numVars = None):
         
@@ -31,8 +32,8 @@ class MILPInstance(object):
             lp.extractCyLPModel(file_name)
             self.integerIndices = [i for (i, j) in enumerate(lp.integerInformation) if j == True]
             infinity = lp.getCoinInfinity()
-            A = lp.coefMatrix
-            b = CyLPArray([0 for _ in range(lp.nRows)])
+            self.A = lp.coefMatrix
+            self.b = CyLPArray([0 for _ in range(lp.nRows)])
             for i in range(lp.nRows):
                 if lp.constraintsLower[i] > -infinity:
                     if lp.constraintsUpper[i] < infinity:
@@ -49,6 +50,7 @@ class MILPInstance(object):
             lp += x <= lp.variablesUpper
             lp += x >= lp.variablesLower
             lp.objective = lp.objective
+            self.c = lp.objective
             self.sense = '<='
             numVars = lp.nCols
         else:
@@ -64,7 +66,8 @@ class MILPInstance(object):
                 self.sense = mip.sense[1] if hasattr(mip, 'sense') else None
                 min_or_max = mip.sense[0] if hasattr(mip, 'sense') else None
                 self.integerIndices = mip.integerIndices if hasattr(mip, 'integerIndices') else None
-                x_u = CyLPArray(mip.x_u) if hasattr(mip, 'x_u') else None
+                self.u = CyLPArray(mip.u) if hasattr(mip, 'u') else None
+                self.l = CyLPArray(mip.l) if hasattr(mip, 'l') else None
                 numVars = mip.numVars if hasattr(mip, 'numVars') else None
                 self.x_sep = mip.x_sep if hasattr(mip, 'x_sep') else None
                 if numVars is None and mip.A is not None:
@@ -76,13 +79,14 @@ class MILPInstance(object):
                 self.A = A
                 self.b = b
                 self.c = c
+                self.l = l
+                self.u = u
                 self.points = points
                 self.rays = rays
                 if sense is not None:
                     self.sense = sense[1]
                     min_or_max = sense[0]
                 self.integerIndices = integerIndices
-                x_u = None
                 
             lp = CyClpSimplex()
             if self.A is not None:
@@ -95,14 +99,13 @@ class MILPInstance(object):
             else:
                 raise "Must specify problem in inequality form with more than two variables\n"   
         
-            #Warning: At the moment, you must put bound constraints in explicitly for split cuts
-            x_l = CyLPArray([0 for _ in range(numVars)])
                 
             x = lp.addVariable('x', numVars)
-            
-            lp += x >= x_l
-            if x_u is not None:
-                lp += x <= x_u
+
+            if l is not None:
+                lp += x >= l
+            if u is not None:
+                lp += x <= u
             lp += (A * x <= b if self.sense == '<=' else
                    A * x >= b)
             c = CyLPArray(self.c)
