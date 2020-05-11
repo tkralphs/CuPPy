@@ -38,21 +38,25 @@ class MILPInstance(object):
                 if lp.constraintsLower[i] > -infinity:
                     if lp.constraintsUpper[i] < infinity:
                         raise Exception('Cannot handle ranged constraints')
-                    b[i] = -lp.constraintsLower[i]
+                    self.b[i] = -lp.constraintsLower[i]
                     for j in range(lp.nCols):
-                        A[i, j] = -A[i, j]
+                        self.A[i, j] = -self.A[i, j]
                 elif lp.constraintsUpper[i] < infinity:
-                    b[i] = lp.constraintsUpper[i]
+                    self.b[i] = lp.constraintsUpper[i]
                 else:
                     raise Exception('Constraint with no bounds detected')
-            x = lp.addVariable('x', lp.nCols)
-            lp += A * x <= b
-            lp += x <= lp.variablesUpper
-            lp += x >= lp.variablesLower
-            lp.objective = lp.objective
+            #x = lp.addVariable('x', lp.nCols)
+            #lp += A * x <= b
+            #lp += x <= lp.variablesUpper
+            #lp += x >= lp.variablesLower
+            #lp.objective = lp.objective
             self.c = lp.objective
             self.sense = '<='
             numVars = lp.nCols
+            self.lp = lp
+            self.l = lp.variablesLower
+            self.u = lp.variablesUpper
+            self.x = lp.getVarByName('x')
         else:
             min_or_max = None
             if module_name is not None:
