@@ -335,7 +335,10 @@ def solve(m, whichCuts = [], use_cglp = False, debug_print = False, eps = EPS,
     else:
         b = m.lp.constraintsLower.copy()
         mult = 1.0
-    A = m.A.copy()
+    if type(m.A) == csc_matrixPlus:
+        A = m.A.toarray()
+    else:
+        A = m.A.copy()
     for i in range(m.lp.nCols):
         e = np.zeros((1, m.lp.nCols))
         if m.lp.variablesUpper[i] < infinity:
