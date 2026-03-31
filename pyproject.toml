@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "coinor.cuppy"
+version = "0.96.3"
+description = "Graphics for Understanding Mathematical Programming in Python"
+readme = "README.md"
+license = { text = "Eclipse Public License" }
+authors = [
+    { name = "Ted Ralphs", email = "ted@lehigh.edu" },
+]
+requires-python = ">=3.6"
+dependencies = [
+    "coinor.grumpy",
+    "matplotlib",
+    "cylp",
+    "pulp"
+]
+
+[project.urls]
+Homepage = "https://github.com/coin-or/CuPPy"
+Repository = "https://github.com/coin-or/CuPPy"
+Documentation = "https://tkralphs.github.io/CuPPy"
+
+[tool.setuptools]
+packages = ["coinor", "coinor.cuppy", "coinor.cuppy.examples"]
+
+[tool.setuptools.package-dir]
+"coinor" = "src"
+"coinor.cuppy" = "src/cuppy"
