@@ -1,8 +1,3 @@
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import range
-from past.utils import old_div
 __version__    = '0.5.2'
 __author__     = 'Aykut Bulut and Ted Ralphs'
 __license__    = 'Eclipse Public License'
@@ -74,9 +69,9 @@ def gomoryMixedIntegerCut(m, rowInds = None, eps = EPS, debug_print = False):
                     f.append(0)
                 else:
                     f.append(getFraction(lp.tableau[row, i], eps))
-            pi = np.array([old_div(f[j],f0) if f[j] <= f0 
-                           else old_div((1-f[j]),(1-f0)) for j in range(lp.nVariables)])
-            pi_slacks = np.array([old_div(x,f0) if x > 0 else old_div(-x,(1-f0))  
+            pi = np.array([f[j]/f0 if f[j] <= f0 
+                           else (1-f[j])/(1-f0) for j in range(lp.nVariables)])
+            pi_slacks = np.array([x/f0 if x > 0 else -x/(1-f0)  
                                  for x in lp.tableau[row, lp.nVariables:]])
             pi -= pi_slacks * lp.coefMatrix
             pi0 = (1 - np.dot(pi_slacks, lp.constraintsUpper) if m.sense == '<='

@@ -39,11 +39,6 @@ InvCollection:
                      it the to InvProb
         solve():     uses other methods iteratively to solve the InvProb
 '''
-from __future__ import print_function
-from __future__ import absolute_import
-from builtins import str
-from builtins import range
-from builtins import object
 
 __version__    = '0.5.2'
 __author__     = 'Aykut Bulut and Ted Ralphs'
@@ -64,6 +59,9 @@ from .milpInstance import MILPInstance
 import sys
 sys.path.append('examples')
 
+from matplotlib import rcParams
+
+rcParams["mathtext.fontset"] = 'cm'
 
 EPS = 1e-6
 class GenericSeparation(object):
@@ -192,7 +190,7 @@ def read_instance(module_name):
 if __name__ == '__main__':
     
     display = True
-    prob, vars, mip = read_instance(module_name = 'MIP8')
+    prob, vars, mip = read_instance(module_name = 'coinor.cuppy.examples.MIP8')
 
     if display:
         p = Polyhedron2D(A = mip.A, b = mip.b)

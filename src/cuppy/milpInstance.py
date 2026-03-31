@@ -3,8 +3,6 @@ Created on Apr 26, 2016
 
 @author: TedR
 '''
-from builtins import range
-from builtins import object
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling import CyLPArray
 import importlib as ilib
