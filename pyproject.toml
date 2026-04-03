@@ -20,8 +20,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/coin-or/CuPPy"
-Repository = "https://github.com/coin-or/CuPPy"
+Homepage = "https://github.com/tkralphs/CuPPy"
+Repository = "https://github.com/tkralphs/CuPPy"
 Documentation = "https://tkralphs.github.io/CuPPy"
 
 [tool.setuptools]
